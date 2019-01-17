@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Configuration;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using FileStorage.BLL.Util;
+using Ninject;
+using Ninject.Modules;
+using Ninject.Web.Mvc;
 
 namespace FileStorage.PL.WEB
 {
@@ -16,6 +17,11 @@ namespace FileStorage.PL.WEB
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            NinjectModule registrations = new NinjectRegistrations(ConfigurationManager.ConnectionStrings["TestDBConnection"].ConnectionString);
+            var kernel = new StandardKernel(registrations);
+            kernel.Unbind<ModelValidatorProvider>();
+            DependencyResolver.SetResolver(new NinjectDependencyResolver(kernel));
         }
     }
 }

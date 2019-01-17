@@ -7,44 +7,44 @@ using FileStorage.DAL.Interfaces;
 
 namespace FileStorage.DAL.Repositories
 {
-    class UserProfileRepository : IUserProfileRepository
+    class UserProfileRepository : IRepository<UserProfile>
     {
-        public ApplicationContext Database { get; set; }
+        private readonly ApplicationContext _database; 
 
         public UserProfileRepository(ApplicationContext db)
         {
-            Database = db;
+            _database = db;
         }
         public void Create(UserProfile item)
         {
-            Database.UserProfiles.Add(item);
+            _database.UserProfiles.Add(item);
         }
 
         public IEnumerable<UserProfile> GetAll()
         {
-            return Database.UserProfiles.Include(p => p.ApplicationUser);
+            return _database.UserProfiles.Include(p => p.ApplicationUser);
         }
 
         public UserProfile GetbyId(string id)
         {
-            return Database.UserProfiles.FirstOrDefault(p => p.Id == id);
+            return _database.UserProfiles.FirstOrDefault(p => p.Id == id);
         }
 
         public void Update(UserProfile item)
         {
-            Database.Entry(item).State = EntityState.Modified;
+            _database.Entry(item).State = EntityState.Modified;
         }
 
         public void Delete(string id)
         {
-            var item = Database.UserProfiles.FirstOrDefault(p => p.Id == id);
+            var item = _database.UserProfiles.FirstOrDefault(p => p.Id == id);
             if (item != null)
-                Database.UserProfiles.Remove(item);
+                _database.UserProfiles.Remove(item);
         }
 
         public void Dispose()
         {
-            Database.Dispose();
+            _database.Dispose();
         }
     }
 }

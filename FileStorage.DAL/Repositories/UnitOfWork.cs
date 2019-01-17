@@ -15,23 +15,24 @@ namespace FileStorage.DAL.Repositories
     {
         private readonly ApplicationContext _db;
 
-        private ApplicationUserManager userManager;
-        private ApplicationRoleManager roleManager;
-        private IUserProfileRepository userProfileRepository;
+        private readonly ApplicationUserManager _userManager;
+        private readonly ApplicationRoleManager _roleManager;
+        private readonly IRepository<UserProfile> _userProfileRepository;
+        private readonly IRepository<FileData> _fileDataRepository;
 
         public UnitOfWork(string connectionString)
         {
             _db = new ApplicationContext(connectionString);
-            userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(_db));
-            roleManager = new ApplicationRoleManager(new RoleStore<ApplicationRole>(_db));
-            userProfileRepository = new UserProfileRepository(_db);
+            _userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(_db));
+            _roleManager = new ApplicationRoleManager(new RoleStore<ApplicationRole>(_db));
+            _userProfileRepository = new UserProfileRepository(_db);
+            _fileDataRepository = new FileDataRepository(_db);
         }
 
-        public ApplicationUserManager UserManager => userManager;
-
-        public IUserProfileRepository UserProfileRepository => userProfileRepository;
-
-        public ApplicationRoleManager RoleManager => roleManager;
+        public ApplicationUserManager UserManager => _userManager;
+        public IRepository<UserProfile> UserProfileRepository => _userProfileRepository;
+        public IRepository<FileData> FileDataRepository => _fileDataRepository;
+        public ApplicationRoleManager RoleManager => _roleManager;
 
         public async Task SaveAsync()
         {
@@ -51,9 +52,10 @@ namespace FileStorage.DAL.Repositories
             {
                 if (disposing)
                 {
-                    userManager.Dispose();
-                    roleManager.Dispose();
-                    userProfileRepository.Dispose();
+                    _userManager.Dispose();
+                    _roleManager.Dispose();
+                    _userProfileRepository.Dispose();
+                    _fileDataRepository.Dispose();
                 }
                 _disposed = true;
             }

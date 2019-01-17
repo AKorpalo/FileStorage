@@ -11,5 +11,6 @@ namespace FileStorage.DAL.EF
             var ensureDllIsCopied = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
         }
         public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<FileData> FileDatas { get; set; }
     }
 }
