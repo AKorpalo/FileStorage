@@ -29,6 +29,11 @@ namespace FileStorage.BLL.Services
                 return new OperationDetails(false, "Користувача з таким Email не існує", "");
             }
 
+            if (user.UserProfile.CurrentSize + file.Size > user.UserProfile.MaxSize)
+            {
+                return new OperationDetails(false, "Не вистачає місця у сховищі", "");
+            }
+
             string saveFileName = Guid.NewGuid().ToString() + ".temp";
 
             var result = await SaveFileAsync(file.InputStream, file.FilePath + saveFileName);
@@ -49,6 +54,8 @@ namespace FileStorage.BLL.Services
                 User = user,
                 UserId = user.Id
             };
+            user.UserProfile.CurrentSize += fileData.Size;
+            await _database.UserManager.UpdateAsync(user);
             _database.FileDataRepository.Create(fileData);
             await _database.SaveAsync();
             return new OperationDetails(true, "Файл успішно збережено!", "");
@@ -60,7 +67,9 @@ namespace FileStorage.BLL.Services
         public IEnumerable<FileInfoDTO> GetAll()
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<FileData, FileInfoDTO>()
-                .ForMember(x => x.UserId, opt => opt.MapFrom(c => c.User.UserName))).CreateMapper();
+                .ForMember(x => x.UserId, opt => opt.MapFrom(c => c.User.UserName))
+                .ForMember(x => x.Size, opt => opt.MapFrom(c => c.Size / 1000000))
+            ).CreateMapper();
             var list = _database.FileDataRepository.GetAll();
             return mapper.Map<IEnumerable<FileData>, List<FileInfoDTO>>(list);
         }
@@ -71,6 +80,8 @@ namespace FileStorage.BLL.Services
         public FileInfoDTO GetById(string id)
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<FileData, FileInfoDTO>()
+                .ForMember(x => x.UserId, opt => opt.MapFrom(c => c.User.UserName))
+                .ForMember(x => x.Size, opt => opt.MapFrom(c => c.Size / 1000000))
                 .ForMember(x => x.RelativePath, opt => opt.MapFrom(c => c.FilePath))).CreateMapper();
             var item = _database.FileDataRepository.GetbyId(id);
             if (item != null)
@@ -79,6 +90,46 @@ namespace FileStorage.BLL.Services
             }
 
             return null;
+        }
+        public async Task<OperationDetails> UpdateAsync(FileInfoDTO item)
+        {
+            return await Task.Run(() => Update(item));
+        }
+        public OperationDetails Update(FileInfoDTO item)
+        {
+            FileData fileData = _database.FileDataRepository.GetbyId(item.Id);
+            if (fileData == null)
+            {
+                return new OperationDetails(false, "Файл не знайдений","");
+            }
+
+            fileData.IsPrivate = item.IsPrivate;
+            _database.FileDataRepository.Update(fileData);
+            _database.SaveAsync();
+            return new OperationDetails(true,"Файл успішно змінено","");
+        }
+        public async Task<OperationDetails> DeleteAsync(string id, string path)
+        {
+            return await Task.Run(() => Delete(id,path));
+        }
+        public OperationDetails Delete(string id, string path)
+        {
+            var file = FileIsFound(id, path);
+            if (file != null)
+            {
+                try
+                {
+                    File.Delete(Path.Combine(path, file.RelativePath.Substring(2, file.RelativePath.Length - 2)));
+                    _database.FileDataRepository.Delete(file.Id);
+                    _database.SaveAsync();
+                }
+                catch
+                {
+                    return new OperationDetails(false, "Файл не видалено", "");
+                }
+            }
+
+            return new OperationDetails(true, "Файл успішно видалено", "");
         }
         public void Dispose()
         {
@@ -104,7 +155,7 @@ namespace FileStorage.BLL.Services
         {
             return await Task.Run(() => SaveFile(inputStream, filePath));
         }
-        public FileDownloadDTO CheckDownlod(string id, string path, string userId)
+        public FileDownloadDTO CheckDownlod(string id, string path)
         {
             var fileInfo = FileIsFound(id, path);
             if (fileInfo != null)

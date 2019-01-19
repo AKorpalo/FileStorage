@@ -1,0 +1,23 @@
+﻿@model IEnumerable<FileStorage.BLL.DTO.FileInfoDTO>
+
+@{
+    ViewBag.Title = "GetAll";
+}
+
+<h2>GetAll</h2>
+
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@Html.Partial("_Search")
+
+<table class="table">
+    <thead>
+    @Html.Partial("_TableHead", @Model)
+    </thead>
+    <tbody id="data">
+    @Html.Partial("_TableBody", @Model)
+    </tbody>
+</table>

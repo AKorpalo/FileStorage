@@ -1,0 +1,84 @@
+﻿@model FileStorage.PL.WEB.Models.UserViewModel
+
+@{
+    ViewBag.Title = "GetDetails";
+}
+
+<h2>GetDetails</h2>
+
+<div>
+    <h4>UserDTO</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SecondName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SecondName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BirthDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BirthDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CurrentSize)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CurrentSize)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MaxSize)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MaxSize)
+        </dd>
+
+    </dl>
+
+</div>
+<p>
+    @Html.ActionLink("Змінити", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Головна", "Index", "Home") |
+    @Html.ActionLink("Видалити", "Delete", new { id = Model.Id }) 
+    @* @using (Html.BeginForm("Delete", "ManageUserProfile", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <input type="submit" value="Delete" class="btn btn-default" /> |
+            </div>
+        }*@
+</p>

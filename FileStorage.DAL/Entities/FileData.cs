@@ -9,7 +9,7 @@ namespace FileStorage.DAL.Entities
         [Key]
         public string Id { get; set; }
         public string FileName { get; set; }
-        public int Size { get; set; }
+        public double Size { get; set; }
         public DateTime DownloadDate { get; set; }
         public bool IsPrivate { get; set; }
         public string FilePath { get; set; }

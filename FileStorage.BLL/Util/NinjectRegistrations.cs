@@ -17,6 +17,7 @@ namespace FileStorage.BLL.Util
         {
             Bind<IFileService>().To<FileService>().WithConstructorArgument("uow", _uow);
             Bind<IUserService>().To<UserService>().WithConstructorArgument("uow", _uow);
+            Bind<IUserProfileService>().To<UserProfileService>().WithConstructorArgument("uow", _uow);
         }
     }
 }

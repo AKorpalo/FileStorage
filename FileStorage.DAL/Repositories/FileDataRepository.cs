@@ -48,5 +48,30 @@ namespace FileStorage.DAL.Repositories
         {
             _database.Dispose();
         }
+
+        public async Task<IEnumerable<FileData>> GetAllAsync()
+        {
+            return await Task.Run(() => GetAll());
+        }
+
+        public async Task<FileData> GetbyIdAsync(string id)
+        {
+            return await Task.Run(() => GetbyId(id));
+        }
+
+        public async Task CreateAsync(FileData item)
+        {
+            await Task.Run(() => Create(item));
+        }
+
+        public async Task UpdateAsync(FileData item)
+        {
+            await Task.Run(() => Update(item));
+        }
+
+        public async Task DeleteAsync(string id)
+        {
+            await Task.Run(() => Delete(id));
+        }
     }
 }
