@@ -16,7 +16,7 @@ namespace FileStorage.PL.WEB.Controllers
     public class FileController : Controller
     {
         [Inject]
-        public IFileService FileService { get; set; }
+        public IUnitOfWorkService UnitOfWorkService { get; set; }
 
         public ActionResult Create()
         {
@@ -45,7 +45,7 @@ namespace FileStorage.PL.WEB.Controllers
                         InputStream = file.InputStream
                     };
 
-                    var result = await FileService.Create(fileDto);
+                    var result = await UnitOfWorkService.FileService.Create(fileDto);
 
                     if (result.Succedeed)
                     {
@@ -63,7 +63,7 @@ namespace FileStorage.PL.WEB.Controllers
         [Authorize]
         public async Task<ActionResult> GetAll()
         {
-            var list = await FileService.GetAllAsync();
+            var list = await UnitOfWorkService.FileService.GetAllAsync();
             var model = list.Where(p => p.UserId == User.Identity.Name);
             return View(model);
         }
@@ -71,7 +71,7 @@ namespace FileStorage.PL.WEB.Controllers
         [Authorize]
         public async Task<PartialViewResult> _GetAll(string search)
         {
-            var list = await FileService.GetAllAsync();
+            var list = await UnitOfWorkService.FileService.GetAllAsync();
             var model = list.Where(p => p.UserId == User.Identity.Name);
             var serchModel = model.Where(f => f.FileName.Contains(search));
             return PartialView("_TableBody", serchModel);
@@ -79,7 +79,7 @@ namespace FileStorage.PL.WEB.Controllers
 
         public ActionResult Download(string id)
         {
-            var fileDownloadInfo = FileService.CheckDownlod(id, Server.MapPath("~"));
+            var fileDownloadInfo = UnitOfWorkService.FileService.CheckDownlod(id, Server.MapPath("~"));
             if (fileDownloadInfo.IsDownload.Succedeed)
             {
                 string fullPath = Server.MapPath(fileDownloadInfo.Path);
@@ -95,7 +95,7 @@ namespace FileStorage.PL.WEB.Controllers
 
         public ActionResult Edit(string id)
         {
-            var file = FileService.GetById(id);
+            var file = UnitOfWorkService.FileService.GetById(id);
             FileStateViewModel model = new FileStateViewModel
             {
                 Id = file.Id,
@@ -114,7 +114,7 @@ namespace FileStorage.PL.WEB.Controllers
                 Id = model.Id,
                 IsPrivate = model.IsPrivate
             };
-            var result = await FileService.UpdateAsync(file);
+            var result = await UnitOfWorkService.FileService.UpdateAsync(file);
             if (result.Succedeed)
             {
                // ModelState.AddModelError(result.Property, result.Message);
@@ -126,7 +126,7 @@ namespace FileStorage.PL.WEB.Controllers
 
         public ActionResult Delete(string id)
         {
-            var model = FileService.GetById(id);
+            var model = UnitOfWorkService.FileService.GetById(id);
             return View(model);
         }
 
@@ -135,9 +135,14 @@ namespace FileStorage.PL.WEB.Controllers
         [Authorize]
         public async Task<ActionResult> Delete(FileInfoDTO item)
         {
-            var result = await FileService.DeleteAsync(item.Id, Server.MapPath("~"));
+            var result = await UnitOfWorkService.FileService.DeleteAsync(item.Id, Server.MapPath("~"));
             if (result.Succedeed)
             {
+                if (User.IsInRole("moderator"))
+                {
+                    return RedirectToAction("ShowUsers","Admin");
+                }
+
                 return RedirectToAction("GetAll");
             }
 

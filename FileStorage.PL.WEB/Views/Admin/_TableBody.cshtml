@@ -1,0 +1,25 @@
+﻿@model IEnumerable<FileStorage.BLL.DTO.UserDTO>
+@foreach (var item in Model)
+{
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CurrentSize)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MaxSize)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "EditUser", new { userId = item.Id }) 
+            @if (User.IsInRole("admin"))
+            {
+                <span>|</span> @Html.ActionLink("Role", "AddRole", new { userId = item.Id }) <span>|</span>
+                @Html.ActionLink("Delete", "Delete", "ManageUserProfile", new { id = item.Id }, null)}
+        </td>
+    </tr>
+}

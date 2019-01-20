@@ -190,6 +190,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -200,6 +201,7 @@
     <Compile Include="Models\FileStateViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
+    <Compile Include="Models\RoleViewModel.cs" />
     <Compile Include="Models\UserProfileViewModel.cs" />
     <Compile Include="Models\UserViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -260,6 +262,13 @@
     <Content Include="Views\Home\_TableBody.cshtml" />
     <Content Include="Views\Home\_TableHead.cshtml" />
     <Content Include="Views\Home\_Search.cshtml" />
+    <Content Include="Views\Admin\ShowUsers.cshtml" />
+    <Content Include="Views\Admin\_TableBody.cshtml" />
+    <Content Include="Views\Admin\_TableHead.cshtml" />
+    <Content Include="Views\Admin\_Search.cshtml" />
+    <Content Include="Views\Admin\EditUser.cshtml" />
+    <Content Include="Views\Admin\AddRole.cshtml" />
+    <Content Include="Views\Admin\_RolesList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Files\" />

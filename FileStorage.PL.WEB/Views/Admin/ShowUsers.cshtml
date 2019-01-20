@@ -1,0 +1,18 @@
+﻿@model IEnumerable<FileStorage.BLL.DTO.UserDTO>
+
+@{
+    ViewBag.Title = "ShowUsers";
+}
+
+<h2>ShowUsers</h2>
+
+@Html.Partial("_Search")
+
+<table class="table">
+    <thead>
+    @Html.Partial("_TableHead", @Model)
+    </thead>
+    <tbody id="data">
+    @Html.Partial("_TableBody", @Model)
+    </tbody>
+</table>

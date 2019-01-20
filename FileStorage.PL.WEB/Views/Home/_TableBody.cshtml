@@ -20,6 +20,10 @@
         </td>
         <td>
             @Html.ActionLink("Download", "Download", "File", new { id = item.Id },null)
+            @if(User.IsInRole("admin") || User.IsInRole("moderator"))
+            {
+            <span>|</span>@Html.ActionLink("Delete", "Delete","File", new { id = item.Id },null)
+            }
         </td>
     </tr>
 }

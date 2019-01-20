@@ -11,6 +11,7 @@ namespace FileStorage.BLL.DTO
         public string Id { get; set; }
         public string FirstName { get; set; }
         public string SecondName { get; set; }
+        public double MaxSize { get; set; }
         public DateTime BirthDate { get; set; }
     }
 }

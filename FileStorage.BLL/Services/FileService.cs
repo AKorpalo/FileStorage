@@ -62,7 +62,12 @@ namespace FileStorage.BLL.Services
         }
         public async Task<IEnumerable<FileInfoDTO>> GetAllAsync()
         {
-            return await Task.Run(() => GetAll());
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<FileData, FileInfoDTO>()
+                .ForMember(x => x.UserId, opt => opt.MapFrom(c => c.User.UserName))
+                .ForMember(x => x.Size, opt => opt.MapFrom(c => c.Size / 1000000))
+            ).CreateMapper();
+            var list = await _database.FileDataRepository.GetAllAsync();
+            return mapper.Map<IEnumerable<FileData>, List<FileInfoDTO>>(list);
         }
         public IEnumerable<FileInfoDTO> GetAll()
         {
@@ -120,8 +125,7 @@ namespace FileStorage.BLL.Services
                 try
                 {
                     File.Delete(Path.Combine(path, file.RelativePath.Substring(2, file.RelativePath.Length - 2)));
-                    _database.FileDataRepository.Delete(file.Id);
-                    _database.SaveAsync();
+                    DeleteFileInfoFromDatabase(file.Id);
                 }
                 catch
                 {
@@ -181,14 +185,33 @@ namespace FileStorage.BLL.Services
                 }
                 else
                 {
-                    _database.FileDataRepository.Delete(fileInfo.Id);
-                    _database.SaveAsync();
+                    DeleteFileInfoFromDatabase(fileInfo.Id);
                     return null;
                 }
             }
 
             return null;
 
+        }
+        private void DeleteFileInfoFromDatabase(string fileId)
+        {
+            var file = _database.FileDataRepository.GetbyId(fileId);
+            if (file != null)
+            {
+                var user = _database.UserProfileRepository.GetbyId(file.UserId);
+                if (user.CurrentSize - file.Size < 0)
+                {
+                    user.CurrentSize = 0;
+                }
+                else
+                {
+                    user.CurrentSize -= file.Size;
+                }
+
+                _database.UserProfileRepository.Update(user);
+                _database.FileDataRepository.Delete(file.Id);
+                _database.SaveAsync();
+            }
         }
     }
 }

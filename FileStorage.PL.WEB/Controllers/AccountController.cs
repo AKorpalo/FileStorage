@@ -17,7 +17,7 @@ namespace FileStorage.PL.WEB.Controllers
     public class AccountController : Controller
     {
         [Inject]
-        public IUserService UserService { get; set; }
+        public IUnitOfWorkService UnitOfWorkService { get; set; }
         private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
 
         public ActionResult Login()
@@ -33,7 +33,7 @@ namespace FileStorage.PL.WEB.Controllers
             if (ModelState.IsValid)
             {
                 RegisterDto registerDto = new RegisterDto { UserName = model.Login, Password = model.Password };
-                ClaimsIdentity claims = await UserService.Authenticate(registerDto);
+                ClaimsIdentity claims = await UnitOfWorkService.UserService.Authenticate(registerDto);
                 if (claims == null)
                 {
                     ModelState.AddModelError("", "Невірний логін або пароль!");
@@ -75,7 +75,7 @@ namespace FileStorage.PL.WEB.Controllers
                     FirstName = model.FirstName,
                     SecondName = model.SecondName
                 };
-                OperationDetails operationDetails = await UserService.Create(registerDto);
+                OperationDetails operationDetails = await UnitOfWorkService.UserService.Create(registerDto);
                 if (operationDetails.Succedeed)
                 { 
                     //ViewBag.Message = "Користувача " + model.UserName + " успішно зареєстровано!";
@@ -96,7 +96,7 @@ namespace FileStorage.PL.WEB.Controllers
 
         private async Task SetInitialDataAsync()
         {
-            await UserService.SetInitialData(new RegisterDto()
+            await UnitOfWorkService.UserService.SetInitialData(new RegisterDto()
             {
                 Email = "KorpaloAndrew@gmail.com",
                 UserName = "Weynard",

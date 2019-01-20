@@ -1,0 +1,25 @@
+﻿@model FileStorage.BLL.DTO.RolesDTO
+Ролі користувача:
+<br />
+@foreach (var role in Model.Roles)
+{
+<tr>
+    <td>&bull;</td>
+    <td>@role</td>
+    <td>
+        @using (Ajax.BeginForm("_Roles",
+            new AjaxOptions
+            {
+                UpdateTargetId = "data",
+                LoadingElementId = "loading",
+                LoadingElementDuration = 10
+            }
+            ))
+        {
+            <input style="display: none" type="text" name="userId" value="@Model.Id" />
+            <input style="display: none" type="text" name="role" value="@role" />
+            <input type="submit" value="X" />
+        }
+    </td>
+</tr>
+}

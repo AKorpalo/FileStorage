@@ -16,12 +16,12 @@ namespace FileStorage.PL.WEB.Controllers
     public class ManageUserProfileController : Controller
     {
         [Inject]
-        public IUserProfileService UserProfileService { get; set; }
+        public IUnitOfWorkService UnitOfWorkService { get; set; }
 
         [Authorize]
         public async Task<ActionResult> GetDetails()
         {
-            var user = await UserProfileService.GetByAllDetailsById(User.Identity.GetUserId());
+            var user = await UnitOfWorkService.UserProfileService.GetAllDetailsById(User.Identity.GetUserId());
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<UserDTO, UserViewModel>()
             ).CreateMapper();
             var model = mapper.Map<UserDTO, UserViewModel>(user);
@@ -29,9 +29,9 @@ namespace FileStorage.PL.WEB.Controllers
         }
 
         [Authorize]
-        public ActionResult Edit(string id)
+        public async Task<ActionResult> Edit(string id)
         {
-            var user = UserProfileService.GetByEditDetailsById(id).Result;
+            var user = await UnitOfWorkService.UserProfileService.GetEditDetailsById(id);
             if (user != null)
             {
                 var model = new UserProfileViewModel
@@ -54,17 +54,17 @@ namespace FileStorage.PL.WEB.Controllers
         {
             if (ModelState.IsValid)
             {
-                UserProfileDTO userProfile = new UserProfileDTO
+                UserDTO userProfile = new UserDTO
                 {
                     Id = model.Id,
                     FirstName = model.FirstName,
                     SecondName = model.SecondName,
                     BirthDate = model.BirthDate
                 };
-                var operationDetails = await UserProfileService.Update(userProfile);
+                var operationDetails = await UnitOfWorkService.UserProfileService.Update(userProfile);
                 if (operationDetails.Succedeed)
                 {
-                    RedirectToAction("Edit");
+                    RedirectToAction("GetDetails");
                 }
                 else
                 {
@@ -73,13 +73,13 @@ namespace FileStorage.PL.WEB.Controllers
                 }
             }
 
-            return RedirectToAction("GetDetails");
+            return View(model);
         }
 
         [Authorize]
         public ActionResult Delete(string id)
         {
-            var result = UserProfileService.Delete(id, Server.MapPath("~"));
+            var result = UnitOfWorkService.UserProfileService.Delete(id, Server.MapPath("~"));
             if (result.Succedeed)
             {
                 return RedirectToAction("Login","Account");

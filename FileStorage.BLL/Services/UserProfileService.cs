@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace FileStorage.BLL.Services
         {
             _database = uow;
         }
-        public async Task<OperationDetails> Update(UserProfileDTO userProfileDto)
+        public async Task<OperationDetails> Update(UserDTO userProfileDto)
         {
             UserProfile userProfile = await _database.UserProfileRepository.GetbyIdAsync(userProfileDto.Id);
             if (userProfile != null)
@@ -27,14 +28,17 @@ namespace FileStorage.BLL.Services
                 userProfile.FirstName = userProfileDto.FirstName;
                 userProfile.SecondName = userProfileDto.SecondName;
                 userProfile.BirthDate = userProfileDto.BirthDate;
+                if (Math.Abs(userProfileDto.MaxSize) > 0)
+                {
+                    userProfile.MaxSize = userProfileDto.MaxSize;
+                } 
                 _database.UserProfileRepository.Update(userProfile);
                 await _database.SaveAsync();
                 return new OperationDetails(true, "Дані оновлені!", "");
             }
             return new OperationDetails(false, "Користувача не існує!","");
         }
-
-        public async Task<UserDTO> GetByAllDetailsById(string id)
+        public async Task<UserDTO> GetAllDetailsById(string id)
         {
             UserProfile userProfile = await Task.Run(()=> _database.UserProfileRepository.GetbyId(id));
             if (userProfile != null)
@@ -49,8 +53,7 @@ namespace FileStorage.BLL.Services
 
             return null;
         }
-
-        public async Task<UserProfileDTO> GetByEditDetailsById(string id)
+        public async Task<UserProfileDTO> GetEditDetailsById(string id)
         {
             UserProfile userProfile = await Task.Run(() => _database.UserProfileRepository.GetbyId(id));
             if (userProfile != null)
@@ -61,17 +64,24 @@ namespace FileStorage.BLL.Services
 
             return null;
         }
+        public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
+        {
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<UserProfile, UserDTO>()
+                .ForMember(x => x.Email, opt => opt.MapFrom(c => c.ApplicationUser.Email))
+                .ForMember(x => x.UserName, opt => opt.MapFrom(c => c.ApplicationUser.UserName))
+            ).CreateMapper();
+            var list = await _database.UserProfileRepository.GetAllAsync();
+            return mapper.Map<IEnumerable<UserProfile>, List<UserDTO>>(list);
+        }
 
         public void Dispose()
         {
             _database.Dispose();
         }
-
         public async Task<OperationDetails> DeleteAsync(string id, string path)
         {
             return await Task.Run(() => Delete(id,path));
         }
-
         public OperationDetails Delete(string id, string path)
         {
             ApplicationUser user = _database.UserManager.FindById(id);

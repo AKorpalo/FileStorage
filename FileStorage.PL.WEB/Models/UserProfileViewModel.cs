@@ -11,6 +11,7 @@ namespace FileStorage.PL.WEB.Models
         public string Id { get; set; }
         public string FirstName { get; set; }
         public string SecondName { get; set; }
+        public double MaxSize { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }

@@ -15,9 +15,10 @@ namespace FileStorage.BLL.Util
         }
         public override void Load()
         {
-            Bind<IFileService>().To<FileService>().WithConstructorArgument("uow", _uow);
-            Bind<IUserService>().To<UserService>().WithConstructorArgument("uow", _uow);
-            Bind<IUserProfileService>().To<UserProfileService>().WithConstructorArgument("uow", _uow);
+            //Bind<IFileService>().To<FileService>().WithConstructorArgument("uow", _uow);
+            //Bind<IUserService>().To<UserService>().WithConstructorArgument("uow", _uow);
+            //Bind<IUserProfileService>().To<UserProfileService>().WithConstructorArgument("uow", _uow);
+            Bind<IUnitOfWorkService>().To<UnitOfWorkService>().WithConstructorArgument("uow", _uow);
         }
     }
 }
