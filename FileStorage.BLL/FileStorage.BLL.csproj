@@ -101,6 +101,7 @@
     <Compile Include="DTO\RolesDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="DTO\UserProfileDTO.cs" />
+    <Compile Include="Infrastucture\BitlyApi.cs" />
     <Compile Include="Infrastucture\OperationDetails.cs" />
     <Compile Include="Interfaces\IFileService.cs" />
     <Compile Include="Interfaces\IRoleService.cs" />

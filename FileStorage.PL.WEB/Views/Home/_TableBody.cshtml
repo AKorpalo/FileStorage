@@ -19,7 +19,7 @@
             @Html.DisplayFor(modelItem => item.UserId)
         </td>
         <td>
-            @Html.ActionLink("Download", "Download", "File", new { id = item.Id },null)
+            @Html.ActionLink("Download", "_Download", "File", new { id = item.Id }, new { @class = "viewDialog", data_dialog_title = "Коротка ссилка" })
             @if(User.IsInRole("admin") || User.IsInRole("moderator"))
             {
             <span>|</span>@Html.ActionLink("Delete", "Delete","File", new { id = item.Id },null)

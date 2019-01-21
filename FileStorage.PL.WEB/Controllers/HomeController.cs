@@ -13,9 +13,9 @@ namespace FileStorage.PL.WEB.Controllers
     {
         [Inject]
         public IUnitOfWorkService UnitOfWorkService { get; set; }
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            var list = UnitOfWorkService.FileService.GetAll();
+            var list = await UnitOfWorkService.FileService.GetAllAsync();
             var model = list.Where(p => p.IsPrivate == false);
             return View(model);
         }

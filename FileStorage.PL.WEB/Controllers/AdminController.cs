@@ -30,7 +30,7 @@ namespace FileStorage.PL.WEB.Controllers
         }
         public async Task<ActionResult> EditUser(string userId)
         {
-            var details = await UnitOfWorkService.UserProfileService.GetEditDetailsById(userId);
+            var details = await UnitOfWorkService.UserProfileService.GetEditDetailsByIdAsync(userId);
             UserProfileViewModel model = new UserProfileViewModel
             {
                 Id = details.Id,
@@ -54,7 +54,7 @@ namespace FileStorage.PL.WEB.Controllers
                 BirthDate = model.BirthDate,
                 MaxSize = model.MaxSize
             };
-            var result = await UnitOfWorkService.UserProfileService.Update(user);
+            var result = await UnitOfWorkService.UserProfileService.UpdateAsync(user);
             if (result.Succedeed)
             {
                 return RedirectToAction("ShowUsers");
@@ -90,7 +90,7 @@ namespace FileStorage.PL.WEB.Controllers
         public ActionResult _Roles(string userId, string role)
         {
             UnitOfWorkService.RoleService.DeleteRole(userId, role);
-            return RedirectToAction("AddRole","Admin",new{ userId = userId });
+            return RedirectToAction("AddRole","Admin",new{ userId });
         }
     }
 }

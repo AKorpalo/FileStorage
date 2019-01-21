@@ -8,11 +8,10 @@ namespace FileStorage.BLL.Interfaces
 {
     public interface IUserProfileService : IDisposable
     { 
-        Task<OperationDetails> Update(UserDTO userProfileDto);
-        Task<UserDTO> GetAllDetailsById(string id);
-        Task<UserProfileDTO> GetEditDetailsById(string id);
+        Task<OperationDetails> UpdateAsync(UserDTO userProfileDto);
+        Task<UserDTO> GetAllDetailsByIdAsync(string id);
+        Task<UserProfileDTO> GetEditDetailsByIdAsync(string id);
         Task<IEnumerable<UserDTO>> GetAllUsersAsync();
         Task<OperationDetails> DeleteAsync(string id, string path);
-        OperationDetails Delete(string id, string path);
     }
 }

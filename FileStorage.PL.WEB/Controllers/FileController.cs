@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
 using FileStorage.BLL.DTO;
+using FileStorage.BLL.Infrastucture;
 using FileStorage.BLL.Interfaces;
 using FileStorage.PL.WEB.Models;
 using Microsoft.AspNet.Identity;
@@ -45,7 +46,7 @@ namespace FileStorage.PL.WEB.Controllers
                         InputStream = file.InputStream
                     };
 
-                    var result = await UnitOfWorkService.FileService.Create(fileDto);
+                    var result = await UnitOfWorkService.FileService.CreateAsync(fileDto);
 
                     if (result.Succedeed)
                     {
@@ -77,9 +78,9 @@ namespace FileStorage.PL.WEB.Controllers
             return PartialView("_TableBody", serchModel);
         }
 
-        public ActionResult Download(string id)
+        public async Task<ActionResult> Download(string id)
         {
-            var fileDownloadInfo = UnitOfWorkService.FileService.CheckDownlod(id, Server.MapPath("~"));
+            var fileDownloadInfo = await UnitOfWorkService.FileService.DownloadAsync(id, Server.MapPath("~"));
             if (fileDownloadInfo.IsDownload.Succedeed)
             {
                 string fullPath = Server.MapPath(fileDownloadInfo.Path);
@@ -92,10 +93,24 @@ namespace FileStorage.PL.WEB.Controllers
             }
             return RedirectToAction("GetAll", "File");
         }
-
-        public ActionResult Edit(string id)
+        public async Task<ActionResult> _Download(string id)
         {
-            var file = UnitOfWorkService.FileService.GetById(id);
+            string c = await Task.Run(()=>BitlyApi.GetShortenedUrl(Url.Action("Download","File",new {id}, this.Request.Url.Scheme)));
+            if (c != null)
+            {
+                var model = new ShortLinkViewModel
+                {
+                    Id = id,
+                    ShortLink = c
+                };
+                return PartialView(model);
+            }
+
+            return HttpNotFound();
+        }
+        public async Task<ActionResult> Edit(string id)
+        {
+            var file = await UnitOfWorkService.FileService.GetByIdAsync(id);
             FileStateViewModel model = new FileStateViewModel
             {
                 Id = file.Id,
@@ -124,9 +139,9 @@ namespace FileStorage.PL.WEB.Controllers
             return View(model);
         }
 
-        public ActionResult Delete(string id)
+        public async Task<ActionResult> Delete(string id)
         {
-            var model = UnitOfWorkService.FileService.GetById(id);
+            var model = await UnitOfWorkService.FileService.GetByIdAsync(id);
             return View(model);
         }
 

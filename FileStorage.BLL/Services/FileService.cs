@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Entity;
 using System.IO;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace FileStorage.BLL.Services
             _database = uow;
         }
 
-        public async Task<OperationDetails> Create(FileDTO file)
+        public async Task<OperationDetails> CreateAsync(FileDTO file)
         {
             ApplicationUser user = await _database.UserManager.FindByIdAsync(file.UserId);
             if (user == null)
@@ -69,26 +70,13 @@ namespace FileStorage.BLL.Services
             var list = await _database.FileDataRepository.GetAllAsync();
             return mapper.Map<IEnumerable<FileData>, List<FileInfoDTO>>(list);
         }
-        public IEnumerable<FileInfoDTO> GetAll()
-        {
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<FileData, FileInfoDTO>()
-                .ForMember(x => x.UserId, opt => opt.MapFrom(c => c.User.UserName))
-                .ForMember(x => x.Size, opt => opt.MapFrom(c => c.Size / 1000000))
-            ).CreateMapper();
-            var list = _database.FileDataRepository.GetAll();
-            return mapper.Map<IEnumerable<FileData>, List<FileInfoDTO>>(list);
-        }
         public async Task<FileInfoDTO> GetByIdAsync(string id)
-        {
-            return await Task.Run(() => GetById(id));
-        }
-        public FileInfoDTO GetById(string id)
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<FileData, FileInfoDTO>()
                 .ForMember(x => x.UserId, opt => opt.MapFrom(c => c.User.UserName))
                 .ForMember(x => x.Size, opt => opt.MapFrom(c => c.Size / 1000000))
                 .ForMember(x => x.RelativePath, opt => opt.MapFrom(c => c.FilePath))).CreateMapper();
-            var item = _database.FileDataRepository.GetbyId(id);
+            var item = await _database.FileDataRepository.GetbyIdAsync(id);
             if (item != null)
             {
                 return mapper.Map<FileData, FileInfoDTO>(item);
@@ -98,34 +86,26 @@ namespace FileStorage.BLL.Services
         }
         public async Task<OperationDetails> UpdateAsync(FileInfoDTO item)
         {
-            return await Task.Run(() => Update(item));
-        }
-        public OperationDetails Update(FileInfoDTO item)
-        {
-            FileData fileData = _database.FileDataRepository.GetbyId(item.Id);
+            FileData fileData = await _database.FileDataRepository.GetbyIdAsync(item.Id);
             if (fileData == null)
             {
-                return new OperationDetails(false, "Файл не знайдений","");
+                return new OperationDetails(false, "Файл не знайдений", "");
             }
 
             fileData.IsPrivate = item.IsPrivate;
             _database.FileDataRepository.Update(fileData);
-            _database.SaveAsync();
-            return new OperationDetails(true,"Файл успішно змінено","");
+            await _database.SaveAsync();
+            return new OperationDetails(true, "Файл успішно змінено", "");
         }
         public async Task<OperationDetails> DeleteAsync(string id, string path)
         {
-            return await Task.Run(() => Delete(id,path));
-        }
-        public OperationDetails Delete(string id, string path)
-        {
-            var file = FileIsFound(id, path);
+            var file = await FileIsFoundAsync(id, path);
             if (file != null)
             {
                 try
                 {
                     File.Delete(Path.Combine(path, file.RelativePath.Substring(2, file.RelativePath.Length - 2)));
-                    DeleteFileInfoFromDatabase(file.Id);
+                    await DeleteFileInfoFromDatabaseAsync(file.Id);
                 }
                 catch
                 {
@@ -140,13 +120,13 @@ namespace FileStorage.BLL.Services
             _database.Dispose();
         }
 
-        private OperationDetails SaveFile(Stream inputStream, string filePath)
+        private async Task<OperationDetails> SaveFileAsync(Stream inputStream, string filePath)
         {
             using (FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
             {
                 try
                 {
-                    inputStream.CopyTo(fileStream);
+                    await inputStream.CopyToAsync(fileStream);
                     return new OperationDetails(true, "Файл збережено успішно", "");
                 }
                 catch (Exception ex)
@@ -155,13 +135,9 @@ namespace FileStorage.BLL.Services
                 }
             }
         }
-        private async Task<OperationDetails> SaveFileAsync(Stream inputStream, string filePath)
+        public async Task<FileDownloadDTO> DownloadAsync(string id, string path)
         {
-            return await Task.Run(() => SaveFile(inputStream, filePath));
-        }
-        public FileDownloadDTO CheckDownlod(string id, string path)
-        {
-            var fileInfo = FileIsFound(id, path);
+            var fileInfo = await FileIsFoundAsync(id, path);
             if (fileInfo != null)
             {
                 return new FileDownloadDTO()
@@ -174,9 +150,9 @@ namespace FileStorage.BLL.Services
 
             return new FileDownloadDTO() { IsDownload = new OperationDetails(false, "Файл не існує!", "") };
         }
-        private FileInfoDTO FileIsFound(string id, string path)
+        private async Task<FileInfoDTO> FileIsFoundAsync(string id, string path)
         {
-            FileInfoDTO fileInfo = GetById(id);
+            FileInfoDTO fileInfo = await GetByIdAsync(id);
             if (fileInfo != null)
             {
                 if (File.Exists(Path.Combine(path, fileInfo.RelativePath.Substring(2, fileInfo.RelativePath.Length - 2))))
@@ -185,7 +161,7 @@ namespace FileStorage.BLL.Services
                 }
                 else
                 {
-                    DeleteFileInfoFromDatabase(fileInfo.Id);
+                    await DeleteFileInfoFromDatabaseAsync(fileInfo.Id);
                     return null;
                 }
             }
@@ -193,7 +169,7 @@ namespace FileStorage.BLL.Services
             return null;
 
         }
-        private void DeleteFileInfoFromDatabase(string fileId)
+        private async Task DeleteFileInfoFromDatabaseAsync(string fileId)
         {
             var file = _database.FileDataRepository.GetbyId(fileId);
             if (file != null)
@@ -210,7 +186,7 @@ namespace FileStorage.BLL.Services
 
                 _database.UserProfileRepository.Update(user);
                 _database.FileDataRepository.Delete(file.Id);
-                _database.SaveAsync();
+                await _database.SaveAsync();
             }
         }
     }

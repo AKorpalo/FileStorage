@@ -20,7 +20,7 @@ namespace FileStorage.BLL.Services
         {
             _database = uow;
         }
-        public async Task<OperationDetails> Update(UserDTO userProfileDto)
+        public async Task<OperationDetails> UpdateAsync(UserDTO userProfileDto)
         {
             UserProfile userProfile = await _database.UserProfileRepository.GetbyIdAsync(userProfileDto.Id);
             if (userProfile != null)
@@ -38,7 +38,7 @@ namespace FileStorage.BLL.Services
             }
             return new OperationDetails(false, "Користувача не існує!","");
         }
-        public async Task<UserDTO> GetAllDetailsById(string id)
+        public async Task<UserDTO> GetAllDetailsByIdAsync(string id)
         {
             UserProfile userProfile = await Task.Run(()=> _database.UserProfileRepository.GetbyId(id));
             if (userProfile != null)
@@ -53,7 +53,7 @@ namespace FileStorage.BLL.Services
 
             return null;
         }
-        public async Task<UserProfileDTO> GetEditDetailsById(string id)
+        public async Task<UserProfileDTO> GetEditDetailsByIdAsync(string id)
         {
             UserProfile userProfile = await Task.Run(() => _database.UserProfileRepository.GetbyId(id));
             if (userProfile != null)
@@ -78,13 +78,10 @@ namespace FileStorage.BLL.Services
         {
             _database.Dispose();
         }
+
         public async Task<OperationDetails> DeleteAsync(string id, string path)
         {
-            return await Task.Run(() => Delete(id,path));
-        }
-        public OperationDetails Delete(string id, string path)
-        {
-            ApplicationUser user = _database.UserManager.FindById(id);
+            ApplicationUser user = await _database.UserManager.FindByIdAsync(id);
             if (user == null)
             {
                 return new OperationDetails(false,"Такого користувача не існує","");
@@ -96,12 +93,12 @@ namespace FileStorage.BLL.Services
 
             foreach (var file in list)
             {
-                fileService.Delete(file.Id, path);
+                await fileService.DeleteAsync(file.Id, path);
             }
 
             _database.UserManager.Delete(user);
             _database.UserProfileRepository.Delete(user.Id);
-            _database.SaveAsync();
+            await _database.SaveAsync();
             return new OperationDetails(true, "Користувач успішно видалений", "");
         }
     }

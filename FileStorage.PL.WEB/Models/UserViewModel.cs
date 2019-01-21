@@ -22,6 +22,7 @@ namespace FileStorage.PL.WEB.Models
 
         [DisplayName("Дата Народження")]
         [DataType(DataType.Date)]
+        //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/mm/yyyy}")]
         public DateTime BirthDate { get; set; }
 
         [DisplayName("Поточний розмір сховища")]

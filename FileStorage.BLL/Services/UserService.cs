@@ -19,7 +19,7 @@ namespace FileStorage.BLL.Services
         {
             _database = uow;
         }
-        public async Task<ClaimsIdentity> Authenticate(RegisterDto registerDto)
+        public async Task<ClaimsIdentity> AuthenticateAsync(RegisterDto registerDto)
         {
             ClaimsIdentity claims = null;
             ApplicationUser user = await _database.UserManager.FindAsync(registerDto.UserName, registerDto.Password);
@@ -32,7 +32,7 @@ namespace FileStorage.BLL.Services
 
             return claims;
         }
-        public async Task<OperationDetails> Create(RegisterDto registerDto)
+        public async Task<OperationDetails> CreateAsync(RegisterDto registerDto)
         {
             ApplicationUser user = await _database.UserManager.FindByEmailAsync(registerDto.Email);
             if (user == null)
@@ -64,7 +64,7 @@ namespace FileStorage.BLL.Services
             }
             return new OperationDetails(false, "Користувач з такою адресою вже існує!", "Email");
         }
-        public async Task SetInitialData(RegisterDto adminDto, List<string> roles)
+        public async Task SetInitialDataAsync(RegisterDto adminDto, List<string> roles)
         {
             foreach (string roleName in roles)
             {
@@ -76,7 +76,7 @@ namespace FileStorage.BLL.Services
                 }
             }
 
-            await Create(adminDto);
+            await CreateAsync(adminDto);
         }
         public void Dispose()
         {

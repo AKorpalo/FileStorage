@@ -21,7 +21,7 @@ namespace FileStorage.PL.WEB.Controllers
         [Authorize]
         public async Task<ActionResult> GetDetails()
         {
-            var user = await UnitOfWorkService.UserProfileService.GetAllDetailsById(User.Identity.GetUserId());
+            var user = await UnitOfWorkService.UserProfileService.GetAllDetailsByIdAsync(User.Identity.GetUserId());
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<UserDTO, UserViewModel>()
             ).CreateMapper();
             var model = mapper.Map<UserDTO, UserViewModel>(user);
@@ -31,7 +31,7 @@ namespace FileStorage.PL.WEB.Controllers
         [Authorize]
         public async Task<ActionResult> Edit(string id)
         {
-            var user = await UnitOfWorkService.UserProfileService.GetEditDetailsById(id);
+            var user = await UnitOfWorkService.UserProfileService.GetEditDetailsByIdAsync(id);
             if (user != null)
             {
                 var model = new UserProfileViewModel
@@ -61,10 +61,11 @@ namespace FileStorage.PL.WEB.Controllers
                     SecondName = model.SecondName,
                     BirthDate = model.BirthDate
                 };
-                var operationDetails = await UnitOfWorkService.UserProfileService.Update(userProfile);
+                var operationDetails = await UnitOfWorkService.UserProfileService.UpdateAsync(userProfile);
                 if (operationDetails.Succedeed)
                 {
-                    RedirectToAction("GetDetails");
+                    TempData["mes"] = operationDetails.Message;
+                    return RedirectToAction("GetDetails");
                 }
                 else
                 {
@@ -77,11 +78,16 @@ namespace FileStorage.PL.WEB.Controllers
         }
 
         [Authorize]
-        public ActionResult Delete(string id)
+        public async Task<ActionResult> Delete(string id)
         {
-            var result = UnitOfWorkService.UserProfileService.Delete(id, Server.MapPath("~"));
+            var result = await UnitOfWorkService.UserProfileService.DeleteAsync(id, Server.MapPath("~"));
             if (result.Succedeed)
             {
+                if (User.IsInRole("admin"))
+                {
+                    return RedirectToAction("ShowUsers", "Admin");
+                }
+
                 return RedirectToAction("Login","Account");
             }
 

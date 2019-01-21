@@ -11,8 +11,8 @@ namespace FileStorage.BLL.Interfaces
 {
     public interface IUserService : IDisposable
     {
-        Task<OperationDetails> Create(RegisterDto registerDto);
-        Task<ClaimsIdentity> Authenticate(RegisterDto registerDto);
-        Task SetInitialData(RegisterDto adminDto, List<string> roles);
+        Task<OperationDetails> CreateAsync(RegisterDto registerDto);
+        Task<ClaimsIdentity> AuthenticateAsync(RegisterDto registerDto);
+        Task SetInitialDataAsync(RegisterDto adminDto, List<string> roles);
     }
 }

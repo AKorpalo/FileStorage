@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<FileStorage.BLL.DTO.FileInfoDTO>
 
+
 @foreach (var item in Model)
 {
     <tr>
@@ -20,7 +21,7 @@
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-            @Html.ActionLink("Download", "Download", new { id = item.Id }) |
+            @Html.ActionLink("Download", "_Download", new { id = item.Id }, new { @class = "viewDialog", data_dialog_title = "Коротка ссилка" }) |
             @Html.ActionLink("Delete", "Delete", new { id = item.Id })
         </td>
     </tr>

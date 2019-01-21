@@ -11,15 +11,11 @@ namespace FileStorage.BLL.Interfaces
 {
     public interface IFileService : IDisposable
     {
-        Task<OperationDetails> Create(FileDTO file);
+        Task<OperationDetails> CreateAsync(FileDTO file);
         Task<IEnumerable<FileInfoDTO>> GetAllAsync();
-        IEnumerable<FileInfoDTO> GetAll();
         Task<FileInfoDTO> GetByIdAsync(string id);
-        FileInfoDTO GetById(string id);
         Task<OperationDetails> UpdateAsync(FileInfoDTO item);
-        OperationDetails Update(FileInfoDTO item);
         Task<OperationDetails> DeleteAsync(string id,string path);
-        OperationDetails Delete(string id, string path);
-        FileDownloadDTO CheckDownlod(string id, string path);
+        Task<FileDownloadDTO> DownloadAsync(string id, string path);
     }
 }

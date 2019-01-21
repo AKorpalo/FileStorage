@@ -23,7 +23,8 @@ namespace FileStorage.PL.WEB.Models
         public string FirstName { get; set; }
         public string SecondName { get; set; }
 
-        [DataType(DataType.Date)]
+        //[DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/mm/yyyy}")]
         public DateTime BirthDate { get; set; }
     }
 }
