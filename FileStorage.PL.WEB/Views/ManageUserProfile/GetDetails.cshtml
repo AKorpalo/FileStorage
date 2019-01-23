@@ -4,11 +4,19 @@
     ViewBag.Title = "GetDetails";
 }
 
-<h2>GetDetails</h2>
-<h3>@TempData["mes"]</h3>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
 <div>
-    <h4>UserDTO</h4>
-    <hr />
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.Email)
@@ -71,14 +79,5 @@
 </div>
 <p>
     @Html.ActionLink("Змінити", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Головна", "Index", "Home") |
-    @Html.ActionLink("Видалити", "Delete", new { id = Model.Id }) 
-    @* @using (Html.BeginForm("Delete", "ManageUserProfile", FormMethod.Post))
-        {
-            @Html.AntiForgeryToken()
-
-            <div class="form-actions no-color">
-                <input type="submit" value="Delete" class="btn btn-default" /> |
-            </div>
-        }*@
+    @Html.ActionLink("Видалити", "_Delete", new { id = Model.Id }, new { @class = "viewDialog", data_dialog_title = "Видалення" })
 </p>

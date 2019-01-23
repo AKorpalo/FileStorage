@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -20,6 +19,7 @@ namespace FileStorage.BLL.Services
         {
             _database = uow;
         }
+
         public async Task<OperationDetails> UpdateAsync(UserDTO userProfileDto)
         {
             UserProfile userProfile = await _database.UserProfileRepository.GetbyIdAsync(userProfileDto.Id);
@@ -53,17 +53,6 @@ namespace FileStorage.BLL.Services
 
             return null;
         }
-        public async Task<UserProfileDTO> GetEditDetailsByIdAsync(string id)
-        {
-            UserProfile userProfile = await Task.Run(() => _database.UserProfileRepository.GetbyId(id));
-            if (userProfile != null)
-            {
-                var mapper = new MapperConfiguration(cfg => cfg.CreateMap<UserProfile, UserProfileDTO>()).CreateMapper();
-                return mapper.Map<UserProfile, UserProfileDTO>(userProfile);
-            }
-
-            return null;
-        }
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<UserProfile, UserDTO>()
@@ -73,12 +62,6 @@ namespace FileStorage.BLL.Services
             var list = await _database.UserProfileRepository.GetAllAsync();
             return mapper.Map<IEnumerable<UserProfile>, List<UserDTO>>(list);
         }
-
-        public void Dispose()
-        {
-            _database.Dispose();
-        }
-
         public async Task<OperationDetails> DeleteAsync(string id, string path)
         {
             ApplicationUser user = await _database.UserManager.FindByIdAsync(id);
@@ -100,6 +83,11 @@ namespace FileStorage.BLL.Services
             _database.UserProfileRepository.Delete(user.Id);
             await _database.SaveAsync();
             return new OperationDetails(true, "Користувач успішно видалений", "");
+        }
+
+        public void Dispose()
+        {
+            _database.Dispose();
         }
     }
 }

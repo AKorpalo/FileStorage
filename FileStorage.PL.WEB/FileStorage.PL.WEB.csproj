@@ -212,6 +212,9 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Register.css" />
+    <Content Include="Content\SingIn.css" />
+    <Content Include="Content\Table.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
     <Content Include="Content\themes\base\autocomplete.css" />
@@ -277,6 +280,8 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\MyDatePicker.js" />
+    <Content Include="Scripts\MyModal.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -300,8 +305,8 @@
     <Content Include="Views\File\_TableHead.cshtml" />
     <Content Include="Views\File\_TableBody.cshtml" />
     <Content Include="Views\File\Create.cshtml" />
-    <Content Include="Views\File\Edit.cshtml" />
-    <Content Include="Views\File\Delete.cshtml" />
+    <Content Include="Views\File\_Edit.cshtml" />
+    <Content Include="Views\File\_Delete.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\_TableBody.cshtml" />
     <Content Include="Views\Home\_TableHead.cshtml" />
@@ -314,6 +319,7 @@
     <Content Include="Views\Admin\AddRole.cshtml" />
     <Content Include="Views\Admin\_RolesList.cshtml" />
     <Content Include="Views\File\_Download.cshtml" />
+    <Content Include="Views\ManageUserProfile\_Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Files\" />

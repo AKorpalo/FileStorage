@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.UI.WebControls;
 using FileStorage.BLL.DTO;
 using FileStorage.BLL.Infrastucture;
 using FileStorage.BLL.Interfaces;
@@ -18,7 +16,6 @@ namespace FileStorage.PL.WEB.Controllers
     {
         [Inject]
         public IUnitOfWorkService UnitOfWorkService { get; set; }
-
         public ActionResult Create()
         {
             return View();
@@ -34,7 +31,7 @@ namespace FileStorage.PL.WEB.Controllers
                 if (file != null)
                 {
                     var str = "~/App_Data/Files/";
-                    FileDTO fileDto = new FileDTO()
+                    FileInfoDTO fileDto = new FileInfoDTO()
                     {
                         FileName = file.FileName,
                         Size = file.ContentLength,
@@ -77,7 +74,6 @@ namespace FileStorage.PL.WEB.Controllers
             var serchModel = model.Where(f => f.FileName.Contains(search));
             return PartialView("_TableBody", serchModel);
         }
-
         public async Task<ActionResult> Download(string id)
         {
             var fileDownloadInfo = await UnitOfWorkService.FileService.DownloadAsync(id, Server.MapPath("~"));
@@ -95,7 +91,7 @@ namespace FileStorage.PL.WEB.Controllers
         }
         public async Task<ActionResult> _Download(string id)
         {
-            string c = await Task.Run(()=>BitlyApi.GetShortenedUrl(Url.Action("Download","File",new {id}, this.Request.Url.Scheme)));
+            string c = await Task.Run(()=>BitlyApi.GetShortenedUrl(Url.Action("Download","File",new {id}, Request.Url.Scheme)));
             if (c != null)
             {
                 var model = new ShortLinkViewModel
@@ -108,7 +104,7 @@ namespace FileStorage.PL.WEB.Controllers
 
             return HttpNotFound();
         }
-        public async Task<ActionResult> Edit(string id)
+        public async Task<ActionResult> _Edit(string id)
         {
             var file = await UnitOfWorkService.FileService.GetByIdAsync(id);
             FileStateViewModel model = new FileStateViewModel
@@ -116,7 +112,7 @@ namespace FileStorage.PL.WEB.Controllers
                 Id = file.Id,
                 IsPrivate = file.IsPrivate
             }; 
-            return View(model);
+            return PartialView(model);
         }
 
         [HttpPost]
@@ -132,17 +128,16 @@ namespace FileStorage.PL.WEB.Controllers
             var result = await UnitOfWorkService.FileService.UpdateAsync(file);
             if (result.Succedeed)
             {
-               // ModelState.AddModelError(result.Property, result.Message);
+                TempData["SuccessMessage"] = result.Message;
                 return RedirectToAction("GetAll");
             }
-            ModelState.AddModelError(result.Property, result.Message);
-            return View(model);
+            TempData["ErrorMessage"] = result.Message;
+            return RedirectToAction("GetAll");
         }
-
-        public async Task<ActionResult> Delete(string id)
+        public async Task<ActionResult> _Delete(string id)
         {
             var model = await UnitOfWorkService.FileService.GetByIdAsync(id);
-            return View(model);
+            return PartialView(model);
         }
 
         [HttpPost]
@@ -155,13 +150,14 @@ namespace FileStorage.PL.WEB.Controllers
             {
                 if (User.IsInRole("moderator"))
                 {
-                    return RedirectToAction("ShowUsers","Admin");
+                    TempData["SuccessMessage"] = result.Message;
+                    return RedirectToAction("GetAll");
                 }
-
+                TempData["SuccessMessage"] = result.Message;
                 return RedirectToAction("GetAll");
             }
-
-            return RedirectToAction("Delete", (object)item.Id);
+            TempData["ErrorMessage"] = result.Message;
+            return RedirectToAction("GetAll");
         }
     }
 }

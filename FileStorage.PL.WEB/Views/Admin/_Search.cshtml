@@ -1,17 +1,18 @@
-﻿@using (Ajax.BeginForm("_Update",
-    new AjaxOptions
+﻿<div class="search-box">
+    @using (Ajax.BeginForm("_Update",
+        new AjaxOptions
+        {
+            UpdateTargetId = "data",
+            LoadingElementId = "loading",
+            LoadingElementDuration = 10
+        }
+        ))
     {
-        UpdateTargetId = "data",
-        LoadingElementId = "loading",
-        LoadingElementDuration = 10
+        <i class="material-icons">&#xE8B6;</i>
+        <input type="text" name="search" class="form-control" placeholder="Search&hellip;">
     }
-    ))
-{
-    <input type="text" name="search" />
-    <input type="submit" value="Поиск" />
-}
-
-<div id="loading" style="display:none; color:Red; font-weight:bold;">
-    <p>Идет загрузка...</p>
+</div>
+<div id="loading" style="display:none; color:black; font-weight:bold;">
+    <p>Йде пошук...</p>
 </div>
 

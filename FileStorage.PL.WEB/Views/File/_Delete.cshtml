@@ -3,13 +3,8 @@
 @{
     ViewBag.Title = "Delete";
 }
-
-<h2>Delete</h2>
-
-<h3>Are you sure you want to delete this?</h3>
+<h3>Ви впевнені що хочете видалити цей файл?</h3>
 <div>
-    <h4>FileInfoDTO</h4>
-    <hr/>
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.FileName)
@@ -51,15 +46,14 @@
             @Html.DisplayFor(model => model.UserId)
         </dd>
 
-    </dl>
+    </dl> 
 
-    @using (Html.BeginForm())
+    @using (Html.BeginForm("Delete", "File", FormMethod.Post))
     {
         @Html.AntiForgeryToken()
-
+        @Html.HiddenFor(model => model.Id)
         <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default"/> |
-            @Html.ActionLink("Back to List", "Index")
+            <input type="submit" value="Видалити" class="btn btn-primary center-block"/> 
         </div>
     }
 </div>

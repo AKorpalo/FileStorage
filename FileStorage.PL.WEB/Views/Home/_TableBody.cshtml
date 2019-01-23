@@ -10,9 +10,6 @@
             @Html.DisplayFor(modelItem => item.Size)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.IsPrivate)
-        </td>
-        <td>
             @Html.DisplayFor(modelItem => item.DownloadDate)
         </td>
         <td>
@@ -20,9 +17,9 @@
         </td>
         <td>
             @Html.ActionLink("Download", "_Download", "File", new { id = item.Id }, new { @class = "viewDialog", data_dialog_title = "Коротка ссилка" })
-            @if(User.IsInRole("admin") || User.IsInRole("moderator"))
+            @if (User.IsInRole("admin") || User.IsInRole("moderator"))
             {
-            <span>|</span>@Html.ActionLink("Delete", "Delete","File", new { id = item.Id },null)
+                <span>|</span> @Html.ActionLink("Delete", "_Delete","File", new { id = item.Id }, new { @class = "viewDialog", data_dialog_title = "Видалення" })
             }
         </td>
     </tr>

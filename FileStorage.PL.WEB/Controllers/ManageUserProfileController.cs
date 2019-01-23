@@ -15,6 +15,7 @@ namespace FileStorage.PL.WEB.Controllers
 {
     public class ManageUserProfileController : Controller
     {
+        private string _message;
         [Inject]
         public IUnitOfWorkService UnitOfWorkService { get; set; }
 
@@ -25,13 +26,15 @@ namespace FileStorage.PL.WEB.Controllers
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<UserDTO, UserViewModel>()
             ).CreateMapper();
             var model = mapper.Map<UserDTO, UserViewModel>(user);
+            if(_message!=null)
+                ViewData["massage"] = _message;
             return View(model);
         }
 
         [Authorize]
         public async Task<ActionResult> Edit(string id)
         {
-            var user = await UnitOfWorkService.UserProfileService.GetEditDetailsByIdAsync(id);
+            var user = await UnitOfWorkService.UserProfileService.GetAllDetailsByIdAsync(id);
             if (user != null)
             {
                 var model = new UserProfileViewModel
@@ -64,19 +67,23 @@ namespace FileStorage.PL.WEB.Controllers
                 var operationDetails = await UnitOfWorkService.UserProfileService.UpdateAsync(userProfile);
                 if (operationDetails.Succedeed)
                 {
-                    TempData["mes"] = operationDetails.Message;
+                    TempData["SuccessMessage"] = operationDetails.Message;
                     return RedirectToAction("GetDetails");
                 }
-                else
-                {
-                    ModelState.AddModelError(operationDetails.Property, operationDetails.Message);
-                    return View(model);
-                }
+                TempData["ErrorMessage"] = operationDetails.Message;
+                return View(model);
             }
 
             return View(model);
         }
 
+        [Authorize]
+        public ActionResult _Delete(string id)
+        {
+            return PartialView("_Delete",(object)id);
+        }
+
+        [HttpPost]
         [Authorize]
         public async Task<ActionResult> Delete(string id)
         {
@@ -85,12 +92,12 @@ namespace FileStorage.PL.WEB.Controllers
             {
                 if (User.IsInRole("admin"))
                 {
+                    TempData["SuccessMessage"] = result.Message;
                     return RedirectToAction("ShowUsers", "Admin");
                 }
-
                 return RedirectToAction("Login","Account");
             }
-
+            TempData["ErrorMessage"] = result.Message;
             return RedirectToAction("GetDetails");
         }
     }

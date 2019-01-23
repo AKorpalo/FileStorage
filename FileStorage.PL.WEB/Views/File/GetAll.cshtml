@@ -4,19 +4,40 @@
     ViewBag.Title = "GetAll";
 }
 
-<h2>GetAll</h2>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="~/Content/Table.css" rel="stylesheet">
 
-    <p>
-        @Html.ActionLink("Create New", "Create")
-    </p>
-
-    @Html.Partial("_Search")
-
-    <table class="table">
-        <thead>
-            @Html.Partial("_TableHead", @Model)
-        </thead>
-        <tbody id="data">
-            @Html.Partial("_TableBody", @Model)
-        </tbody>
-    </table>
+<div class="container">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-sm-8">
+                    @Html.Partial("_Search")
+                </div>
+                <div class="col-sm-4">
+                    <button type="button" class="btn btn-info add-new" onclick="window.location.href='/File/Create'"><i class="fa fa-plus"></i>Новий файл</button>
+                </div>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                @Html.Partial("_TableHead", @Model)
+            </thead>
+            <tbody id="data">
+                @Html.Partial("_TableBody", @Model)
+            </tbody>
+        </table>
+    </div>
+</div>

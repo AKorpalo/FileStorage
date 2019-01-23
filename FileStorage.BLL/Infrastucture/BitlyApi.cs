@@ -13,22 +13,29 @@ namespace FileStorage.BLL.Infrastucture
 
         public static string GetShortenedUrl(string longUrl)
         {
-            string url = string.Format("{0}?format=xml&longUrl={1}&login={2}&apiKey={3}",
-                ApiSslUrl, 
-                HttpUtility.UrlEncode(longUrl), 
-                Login,
-                ApiKey);
-            XDocument resultXml = XDocument.Load(url);
-            if (resultXml.Descendants("status_code").FirstOrDefault().Value == HttpStatusOk)
+            string url =
+                $"{ApiSslUrl}?format=xml&longUrl={HttpUtility.UrlEncode(longUrl)}&login={Login}&apiKey={ApiKey}";
+            XDocument resultXml;
+            try
             {
-                XElement shortUrlElement = resultXml.Descendants("data").Elements("url").FirstOrDefault();
-                if (shortUrlElement != null)
-                {
-                    return shortUrlElement.Value;
-                }
+                resultXml = XDocument.Load(url);
+            }
+            catch
+            {
+                return longUrl;
             }
 
-            return longUrl;
+            var statusCode = resultXml.Descendants("status_code").FirstOrDefault();
+
+            if (statusCode == null)
+                return longUrl;
+
+            if (statusCode.Value != HttpStatusOk)
+                return longUrl;
+
+            XElement shortUrlElement = resultXml.Descendants("data").Elements("url").FirstOrDefault();
+
+            return shortUrlElement != null ? shortUrlElement.Value : longUrl;
         }
     }
 }

@@ -1,29 +1,17 @@
 ﻿@model FileStorage.PL.WEB.Models.UserProfileViewModel
 
-@{
-    ViewBag.Title = "Edit";
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
 }
 
-<h2>Edit</h2>
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryui")
-    @Styles.Render("~/Content/cssjqryUi")
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#datepicker').datepicker({
-                dateFormat: "dd.mm.yy",
-                inline: true,
-                showOtherMonths: true
-            });
-
-        });
-    </script>}
-@using (Html.BeginForm())
+@using (Html.BeginForm("Edit", "ManageUserProfile", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
-        <h4>UserProfileViewModel</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
@@ -59,7 +47,3 @@
         </div>
     </div>
 }
-
-<div>
-    @Html.ActionLink("Головна", "Index","Home")
-</div>

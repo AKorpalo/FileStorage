@@ -1,0 +1,13 @@
+﻿@model string
+
+<h3>Ви впевнені що хочете видалити профіль?</h3>
+
+@using (Html.BeginForm("Delete", "ManageUserProfile"))
+{
+    @Html.Hidden("id",Model)
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Видалити" class="btn btn-default" />
+        </div>
+    </div>
+}

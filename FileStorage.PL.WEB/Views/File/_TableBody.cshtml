@@ -20,9 +20,9 @@
             @Html.DisplayFor(modelItem => item.UserId)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Edit", "_Edit", new { id = item.Id }, new { @class = "viewDialog", data_dialog_title = "Редагування" }) |
             @Html.ActionLink("Download", "_Download", new { id = item.Id }, new { @class = "viewDialog", data_dialog_title = "Коротка ссилка" }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            @Html.ActionLink("Delete", "_Delete", new { id = item.Id }, new { @class = "viewDialog", data_dialog_title = "Видалення" })
         </td>
     </tr>
 }

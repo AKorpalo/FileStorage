@@ -10,7 +10,6 @@ namespace FileStorage.BLL.Interfaces
     { 
         Task<OperationDetails> UpdateAsync(UserDTO userProfileDto);
         Task<UserDTO> GetAllDetailsByIdAsync(string id);
-        Task<UserProfileDTO> GetEditDetailsByIdAsync(string id);
         Task<IEnumerable<UserDTO>> GetAllUsersAsync();
         Task<OperationDetails> DeleteAsync(string id, string path);
     }

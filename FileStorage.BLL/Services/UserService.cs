@@ -44,10 +44,13 @@ namespace FileStorage.BLL.Services
                 }
 
                 user = new ApplicationUser { Email = registerDto.Email, UserName = registerDto.UserName };
+
                 var result = await _database.UserManager.CreateAsync(user, registerDto.Password);
                 if (result.Errors.Any())
                     return new OperationDetails(false, result.Errors.FirstOrDefault(), "");
+
                 await _database.UserManager.AddToRoleAsync(user.Id, "user");
+
                 UserProfile clientProfile = new UserProfile
                 {
                     Id = user.Id,
@@ -56,14 +59,16 @@ namespace FileStorage.BLL.Services
                     BirthDate = registerDto.BirthDate,
                     RegisterDate = DateTime.Now,
                     MaxSize = 20000000,
-                    CurrentSize = 0,
+                    CurrentSize = 0
                 };
                 _database.UserProfileRepository.Create(clientProfile);
                 await _database.SaveAsync();
+
                 return new OperationDetails(true, "Реєстрація пройшла успішно!", "");
             }
             return new OperationDetails(false, "Користувач з такою адресою вже існує!", "Email");
         }
+
         public async Task SetInitialDataAsync(RegisterDto adminDto, List<string> roles)
         {
             foreach (string roleName in roles)

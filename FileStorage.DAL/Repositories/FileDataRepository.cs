@@ -22,56 +22,48 @@ namespace FileStorage.DAL.Repositories
         {
             return _database.FileDatas.Include(x => x.User);
         }
-
+        public async Task<IEnumerable<FileData>> GetAllAsync()
+        {
+            return await Task.Run(() => GetAll());
+        }
         public FileData GetbyId(string id)
         {
             return _database.FileDatas.FirstOrDefault(x => x.Id == id);
+        }
+        public async Task<FileData> GetbyIdAsync(string id)
+        {
+            return await _database.FileDatas.FirstOrDefaultAsync(x => x.Id == id);
         }
         public void Create(FileData item)
         {
             _database.FileDatas.Add(item);
         }
-
+        public async Task CreateAsync(FileData item)
+        {
+            await Task.Run(() => Create(item));
+        }
         public void Delete(string id)
         {
             var item = _database.FileDatas.FirstOrDefault(p => p.Id == id);
             if (item != null)
                 _database.FileDatas.Remove(item);
         }
-
+        public async Task DeleteAsync(string id)
+        {
+            await Task.Run(() => Delete(id));
+        }
         public void Update(FileData item)
         {
             _database.Entry(item).State = EntityState.Modified;
         }
-
-        public void Dispose()
-        {
-            _database.Dispose();
-        }
-
-        public async Task<IEnumerable<FileData>> GetAllAsync()
-        {
-            return await Task.Run(() => GetAll());
-        }
-
-        public async Task<FileData> GetbyIdAsync(string id)
-        {
-            return await Task.Run(() => GetbyId(id));
-        }
-
-        public async Task CreateAsync(FileData item)
-        {
-            await Task.Run(() => Create(item));
-        }
-
         public async Task UpdateAsync(FileData item)
         {
             await Task.Run(() => Update(item));
         }
 
-        public async Task DeleteAsync(string id)
+        public void Dispose()
         {
-            await Task.Run(() => Delete(id));
+            _database.Dispose();
         }
     }
 }

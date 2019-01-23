@@ -16,6 +16,10 @@ namespace FileStorage.PL.WEB
             //js  
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
                 "~/Scripts/jquery-ui-{version}.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/myJavaScript").Include(
+                        "~/Scripts/MyDatePicker.js",
+                        "~/Scripts/MyModal.js"));
             //css  
             bundles.Add(new StyleBundle("~/Content/cssjqryUi").Include(
                 "~/Content/themes/base/jquery-ui.css"));
@@ -28,6 +32,7 @@ namespace FileStorage.PL.WEB
                       "~/Scripts/bootstrap.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
+                      "~/Content/themes/base/jquery-ui.css",
                       "~/Content/themes/base/all.css",
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));

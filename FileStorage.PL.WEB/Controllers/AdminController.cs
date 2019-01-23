@@ -30,7 +30,7 @@ namespace FileStorage.PL.WEB.Controllers
         }
         public async Task<ActionResult> EditUser(string userId)
         {
-            var details = await UnitOfWorkService.UserProfileService.GetEditDetailsByIdAsync(userId);
+            var details = await UnitOfWorkService.UserProfileService.GetAllDetailsByIdAsync(userId);
             UserProfileViewModel model = new UserProfileViewModel
             {
                 Id = details.Id,
@@ -73,16 +73,16 @@ namespace FileStorage.PL.WEB.Controllers
 
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken] 
         [Authorize(Roles = "admin")]
         public ActionResult AddRole(RoleViewModel model)
         {
             var result = UnitOfWorkService.RoleService.AddRole(model.Id, model.RoleName);
             if (result.Succedeed)
             {
-                return AddRole(model.Id);
+                return RedirectToAction("AddRole",new{ userId = model.Id});
             }
-            return AddRole(model.Id);
+            return RedirectToAction("AddRole", new { userId = model.Id });
         }
 
         [HttpPost]

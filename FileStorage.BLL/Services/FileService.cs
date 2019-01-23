@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data.Entity;
 using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -16,13 +14,35 @@ namespace FileStorage.BLL.Services
     class FileService : IFileService
     {
         private readonly IUnitOfWork _database;
-
         public FileService(IUnitOfWork uow)
         {
             _database = uow;
         }
 
-        public async Task<OperationDetails> CreateAsync(FileDTO file)
+        public async Task<IEnumerable<FileInfoDTO>> GetAllAsync()
+        {
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<FileData, FileInfoDTO>()
+                .ForMember(x => x.UserId, opt => opt.MapFrom(c => c.User.UserName))
+                .ForMember(x => x.Size, opt => opt.MapFrom(c => c.Size / 1000000))
+            ).CreateMapper();
+            var list = await _database.FileDataRepository.GetAllAsync();
+            return mapper.Map<IEnumerable<FileData>, List<FileInfoDTO>>(list);
+        }
+        public async Task<FileInfoDTO> GetByIdAsync(string id)
+        {
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<FileData, FileInfoDTO>()
+                .ForMember(x => x.UserId, opt => opt.MapFrom(c => c.User.UserName))
+                .ForMember(x => x.Size, opt => opt.MapFrom(c => c.Size / 1000000))
+                .ForMember(x => x.RelativePath, opt => opt.MapFrom(c => c.FilePath))).CreateMapper();
+            var item = await _database.FileDataRepository.GetbyIdAsync(id);
+            if (item != null)
+            {
+                return mapper.Map<FileData, FileInfoDTO>(item);
+            }
+
+            return null;
+        }
+        public async Task<OperationDetails> CreateAsync(FileInfoDTO file)
         {
             ApplicationUser user = await _database.UserManager.FindByIdAsync(file.UserId);
             if (user == null)
@@ -35,7 +55,7 @@ namespace FileStorage.BLL.Services
                 return new OperationDetails(false, "Не вистачає місця у сховищі", "");
             }
 
-            string saveFileName = Guid.NewGuid().ToString() + ".temp";
+            string saveFileName = Guid.NewGuid() + ".temp";
 
             var result = await SaveFileAsync(file.InputStream, file.FilePath + saveFileName);
 
@@ -60,29 +80,6 @@ namespace FileStorage.BLL.Services
             _database.FileDataRepository.Create(fileData);
             await _database.SaveAsync();
             return new OperationDetails(true, "Файл успішно збережено!", "");
-        }
-        public async Task<IEnumerable<FileInfoDTO>> GetAllAsync()
-        {
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<FileData, FileInfoDTO>()
-                .ForMember(x => x.UserId, opt => opt.MapFrom(c => c.User.UserName))
-                .ForMember(x => x.Size, opt => opt.MapFrom(c => c.Size / 1000000))
-            ).CreateMapper();
-            var list = await _database.FileDataRepository.GetAllAsync();
-            return mapper.Map<IEnumerable<FileData>, List<FileInfoDTO>>(list);
-        }
-        public async Task<FileInfoDTO> GetByIdAsync(string id)
-        {
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<FileData, FileInfoDTO>()
-                .ForMember(x => x.UserId, opt => opt.MapFrom(c => c.User.UserName))
-                .ForMember(x => x.Size, opt => opt.MapFrom(c => c.Size / 1000000))
-                .ForMember(x => x.RelativePath, opt => opt.MapFrom(c => c.FilePath))).CreateMapper();
-            var item = await _database.FileDataRepository.GetbyIdAsync(id);
-            if (item != null)
-            {
-                return mapper.Map<FileData, FileInfoDTO>(item);
-            }
-
-            return null;
         }
         public async Task<OperationDetails> UpdateAsync(FileInfoDTO item)
         {
@@ -115,26 +112,6 @@ namespace FileStorage.BLL.Services
 
             return new OperationDetails(true, "Файл успішно видалено", "");
         }
-        public void Dispose()
-        {
-            _database.Dispose();
-        }
-
-        private async Task<OperationDetails> SaveFileAsync(Stream inputStream, string filePath)
-        {
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-            {
-                try
-                {
-                    await inputStream.CopyToAsync(fileStream);
-                    return new OperationDetails(true, "Файл збережено успішно", "");
-                }
-                catch (Exception ex)
-                {
-                    return new OperationDetails(false, "Не вдалося зберегти файл!", "");
-                }
-            }
-        }
         public async Task<FileDownloadDTO> DownloadAsync(string id, string path)
         {
             var fileInfo = await FileIsFoundAsync(id, path);
@@ -150,6 +127,22 @@ namespace FileStorage.BLL.Services
 
             return new FileDownloadDTO() { IsDownload = new OperationDetails(false, "Файл не існує!", "") };
         }
+
+        private async Task<OperationDetails> SaveFileAsync(Stream inputStream, string filePath)
+        {
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            {
+                try
+                {
+                    await inputStream.CopyToAsync(fileStream);
+                    return new OperationDetails(true, "Файл збережено успішно", "");
+                }
+                catch
+                {
+                    return new OperationDetails(false, "Не вдалося зберегти файл!", "");
+                }
+            }
+        }
         private async Task<FileInfoDTO> FileIsFoundAsync(string id, string path)
         {
             FileInfoDTO fileInfo = await GetByIdAsync(id);
@@ -159,15 +152,11 @@ namespace FileStorage.BLL.Services
                 {
                     return fileInfo;
                 }
-                else
-                {
-                    await DeleteFileInfoFromDatabaseAsync(fileInfo.Id);
-                    return null;
-                }
+                await DeleteFileInfoFromDatabaseAsync(fileInfo.Id);
+                return null;
             }
 
             return null;
-
         }
         private async Task DeleteFileInfoFromDatabaseAsync(string fileId)
         {
@@ -188,6 +177,11 @@ namespace FileStorage.BLL.Services
                 _database.FileDataRepository.Delete(file.Id);
                 await _database.SaveAsync();
             }
+        }
+
+        public void Dispose()
+        {
+            _database.Dispose();
         }
     }
 }

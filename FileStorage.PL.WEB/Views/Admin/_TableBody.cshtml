@@ -19,7 +19,7 @@
             @if (User.IsInRole("admin"))
             {
                 <span>|</span> @Html.ActionLink("Role", "AddRole", new { userId = item.Id }) <span>|</span>
-                @Html.ActionLink("Delete", "Delete", "ManageUserProfile", new { id = item.Id }, null)}
+                @Html.ActionLink("Delete", "_Delete", "ManageUserProfile", new { id = item.Id }, new { @class = "viewDialog", data_dialog_title = "Видалення" })}
         </td>
     </tr>
 }

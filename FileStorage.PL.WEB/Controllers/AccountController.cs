@@ -30,7 +30,7 @@ namespace FileStorage.PL.WEB.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model)
         {
-            await SetInitialDataAsync();
+            //await SetInitialDataAsync();
             if (ModelState.IsValid)
             {
                 RegisterDto registerDto = new RegisterDto { UserName = model.Login, Password = model.Password };
@@ -63,7 +63,7 @@ namespace FileStorage.PL.WEB.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            await SetInitialDataAsync();
+           // await SetInitialDataAsync();
 
             if (ModelState.IsValid)
             {
@@ -104,8 +104,7 @@ namespace FileStorage.PL.WEB.Controllers
                 Password = "qawsed",
                 FirstName = "Андрій",
                 SecondName = "Корпало",
-                BirthDate = DateTime.Parse("26.06.1996"),
-                Role = "admin",
+                BirthDate = DateTime.Parse("26.06.1996")
             }, new List<string> { "user", "admin", "moderator"});
         }
     }

@@ -10,14 +10,14 @@ namespace FileStorage.DAL.Interfaces
     public interface IRepository<T> : IDisposable
     {
         IEnumerable<T> GetAll();
-        T GetbyId(string id);
-        void Create(T item);
-        void Update(T item);
-        void Delete(string id);
         Task<IEnumerable<T>> GetAllAsync();
+        T GetbyId(string id);
         Task<T> GetbyIdAsync(string id);
+        void Create(T item);
         Task CreateAsync(T item);
+        void Update(T item);
         Task UpdateAsync(T item);
+        void Delete(string id);
         Task DeleteAsync(string id);
     }
 }

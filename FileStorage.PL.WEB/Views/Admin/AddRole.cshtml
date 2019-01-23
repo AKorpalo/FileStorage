@@ -6,21 +6,37 @@
 
 <h2>AddRole</h2>
 
-@using (Html.BeginForm())
+Ролі користувача:
+<br />
+<table>
+    @foreach (var role in Model.Roles)
+    {
+        <tr>
+            <td>&bull;</td>
+            <td>@role</td>
+            <td>
+                @using (Html.BeginForm("_Roles","Admin"))
+                {
+                    <input style="display: none" type="text" name="userId" value="@Model.Id"/>
+                    <input style="display: none" type="text" name="role" value="@role"/>
+                    <input type="submit" value="X"/>
+                }
+            </td>
+        </tr>
+    }
+</table>
+
+@using (Html.BeginForm("AddRole", "Admin"))
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>RolesDTO</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
 
-        <table name="data">
-        @Html.Partial("_RolesList")
-        </table>
-
-        @Html.DropDownList("RoleName", 
+        @Html.DropDownList("RoleName",
             new SelectList(ViewBag.Roles),
             new { @class = "form-control" })
 

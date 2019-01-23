@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace FileStorage.BLL.DTO
 {
@@ -15,8 +12,10 @@ namespace FileStorage.BLL.DTO
         public bool IsPrivate { get; set; }
         public DateTime DownloadDate { get; set; }
         public string RelativePath { get; set; }
-
+        public string FilePath { get; set; }
         [DisplayName("User")]
         public string UserId { get; set; }
+
+        public Stream InputStream { get; set; }
     }
 }

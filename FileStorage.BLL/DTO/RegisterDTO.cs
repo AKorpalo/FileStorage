@@ -19,6 +19,5 @@ namespace FileStorage.BLL.DTO
         public string FirstName { get; set; }
         public string SecondName { get; set; }
         public DateTime BirthDate { get; set; }
-        public string Role { get; set; }
     }
 }

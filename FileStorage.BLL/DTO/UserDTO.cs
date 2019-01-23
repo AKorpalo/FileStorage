@@ -13,6 +13,5 @@ namespace FileStorage.BLL.DTO
         public DateTime BirthDate { get; set; }
         public double CurrentSize { get; set; }
         public double MaxSize { get; set; }
-
     }
 }
