@@ -13,7 +13,7 @@ using Ninject;
 
 namespace FileStorage.PL.WEB.Controllers
 {
-    public class ManageUserProfileController : Controller
+    public class ManageUserProfileController : LangController
     {
         private string _message;
         [Inject]

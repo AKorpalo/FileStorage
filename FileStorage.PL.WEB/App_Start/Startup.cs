@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using FileStorage.BLL.Interfaces;
 using FileStorage.BLL.Services;
 using Microsoft.AspNet.Identity;
@@ -17,7 +18,8 @@ namespace FileStorage.PL.WEB.App_Start
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/Account/Login")
+                LoginPath = new PathString("/Account/Login"),
+                ExpireTimeSpan = TimeSpan.FromMinutes(1)
             });
         }
     }

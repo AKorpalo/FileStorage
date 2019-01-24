@@ -4,7 +4,21 @@
     ViewBag.Title = "AddRole";
 }
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <h2>AddRole</h2>
+
 
 Ролі користувача:
 <br />
@@ -15,11 +29,11 @@
             <td>&bull;</td>
             <td>@role</td>
             <td>
-                @using (Html.BeginForm("_Roles","Admin"))
+                @using (Html.BeginForm("DeleteRole", "Admin", FormMethod.Post))
                 {
-                    <input style="display: none" type="text" name="userId" value="@Model.Id"/>
-                    <input style="display: none" type="text" name="role" value="@role"/>
-                    <input type="submit" value="X"/>
+                    <input style="display: none" type="text" name="userId" value="@Model.Id" />
+                    <input style="display: none" type="text" name="role" value="@role" />
+                    <input type="submit" value="X" />
                 }
             </td>
         </tr>

@@ -16,68 +16,107 @@
         @TempData["ErrorMessage"]
     </div>
 }
-<div>
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
+<style>
+    input.hidden {
+        position: absolute;
+        left: -9999px;
+    }
 
-        <dd>
-            @Html.DisplayFor(model => model.Email)
-        </dd>
+    #profile-image1 {
+        cursor: pointer;
+  
+        width: 100px;
+        height: 100px;
+        border:2px solid #03b1ce ;}
+    .tital{ font-size:16px; font-weight:500;}
+    .bot-border{ border-bottom:1px #d0d0d0 solid;  margin:5px 0  5px 0}	
+    a.btn:hover {
+        -webkit-transform: scale(1.1);
+        -moz-transform: scale(1.1);
+        -o-transform: scale(1.1);
+    }
+    a.btn {
+        -webkit-transform: scale(0.8);
+        -moz-transform: scale(0.8);
+        -o-transform: scale(0.8);
+        -webkit-transition-duration: 0.5s;
+        -moz-transition-duration: 0.5s;
+        -o-transition-duration: 0.5s;
+    }
+</style>
+<script>
+    $(function() {
+        $('#profile-image1').on('click', function() {
+            $('#profile-image-upload').click();
+        });
+    });       
+</script> 
 
-        <dt>
-            @Html.DisplayNameFor(model => model.UserName)
-        </dt>
+<div class="container">
+        <div class="row">
+            <div class="col-md-7 ">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="box box-info">
+                            <div class="box-body">
+                                <div class="col-sm-6">
+                                    <div align="center">
+                                        <img alt="User Pic" src="https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg" id="profile-image1" class="img-circle img-responsive">
+                                        <input id="profile-image-upload" class="hidden" type="file">
+                                        <div style="color:#999;">click here to change profile image</div>
+                                        <!--Upload Image Js And Css-->
+                                    </div>
+                                    <br>
+                                    <!-- /input-group -->
+                                </div>
+                                <div class="col-sm-6">
+                                    <h4 style="color:#00b1b1;">@Html.DisplayFor(model => model.FirstName) @Html.DisplayFor(model => model.SecondName) </h4></span>
+                                </div>
+                                <div class="clearfix"></div>
+                                <hr style="margin:5px 0 5px 0;">
 
-        <dd>
-            @Html.DisplayFor(model => model.UserName)
-        </dd>
+                                <div class="col-sm-5 col-xs-6 tital ">@Html.DisplayNameFor(model => model.Email)</div><div class="col-sm-7">@Html.DisplayFor(model => model.Email)</div>
+                                <div class="clearfix"></div>
+                                <div class="bot-border"></div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
+                                <div class="col-sm-5 col-xs-6 tital ">@Html.DisplayNameFor(model => model.UserName)</div><div class="col-sm-7">@Html.DisplayFor(model => model.UserName)</div>
+                                <div class="clearfix"></div>
+                                <div class="bot-border"></div>
 
-        <dd>
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.SecondName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.SecondName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.BirthDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.BirthDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.CurrentSize)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.CurrentSize)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.MaxSize)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.MaxSize)
-        </dd>
-
-    </dl>
-
-</div>
-<p>
-    @Html.ActionLink("Змінити", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Видалити", "_Delete", new { id = Model.Id }, new { @class = "viewDialog", data_dialog_title = "Видалення" })
-</p>
+                                <div class="col-sm-5 col-xs-6 tital ">@Html.DisplayNameFor(model => model.FirstName)</div><div class="col-sm-7 col-xs-6 ">@Html.DisplayFor(model => model.FirstName)</div>
+                                <div class="clearfix"></div>
+                                <div class="bot-border"></div>
+                                <div class="col-sm-5 col-xs-6 tital ">@Html.DisplayNameFor(model => model.SecondName)</div><div class="col-sm-7"> @Html.DisplayFor(model => model.SecondName)</div>
+                                <div class="clearfix"></div>
+                                <div class="bot-border"></div>
+                                <div class="col-sm-5 col-xs-6 tital ">@Html.DisplayNameFor(model => model.BirthDate)</div><div class="col-sm-7">@Html.DisplayFor(model => model.BirthDate)</div>
+                                <div class="clearfix"></div>
+                                <div class="bot-border"></div>
+                                <div class="col-sm-5 col-xs-6 tital ">@Html.DisplayNameFor(model => model.CurrentSize)</div><div class="col-sm-7">@Html.DisplayFor(model => model.CurrentSize)</div>
+                                <div class="clearfix"></div>
+                                <div class="bot-border"></div>
+                                <div class="col-sm-5 col-xs-6 tital ">@Html.DisplayNameFor(model => model.MaxSize)</div><div class="col-sm-7">@Html.DisplayFor(model => model.MaxSize)</div>
+                                <div class="clearfix"></div>
+                                <div class="bot-border"></div>
+                                <!-- /.box-body -->
+                            </div>
+                            <!-- /.box -->
+                            <p>
+                                <a onclick="window.location.href='/ManageUserProfile/Edit/@Model.Id'" class="btn btn-primary a-btn-slide-text ">
+                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                    <span><strong>Edit</strong></span>            
+                                </a>
+                                
+                                <a href="/ManageUserProfile/_Delete/@Model.Id" class="btn btn-primary a-btn-slide-text viewDialog" data_dialog_title="Видалення">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                    <span ><strong>Delete</strong></span>            
+                                </a>
+                                @*@Html.ActionLink("Змінити", "Edit", new {id = Model.Id}) |
+                                @Html.ActionLink("Видалити", "_Delete", new {id = Model.Id}, new {@class = "viewDialog", data_dialog_title = "Видалення"})*@
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -12,10 +13,12 @@ using Ninject;
 
 namespace FileStorage.PL.WEB.Controllers
 {
-    public class FileController : Controller
+    public class FileController : LangController
     {
         [Inject]
         public IUnitOfWorkService UnitOfWorkService { get; set; }
+
+        private int numberOfObjectsPerPage = 2 ;
         public ActionResult Create()
         {
             return View();
@@ -47,33 +50,74 @@ namespace FileStorage.PL.WEB.Controllers
 
                     if (result.Succedeed)
                     {
+                        TempData["SuccessMessage"] = result.Message;
                         return RedirectToAction("Getall", "File");
                     }
-                }
-                else
-                {
-                    ModelState.AddModelError("Файл не завантажений!","");
+                    TempData["ErrorMessage"] = result.Message;
+                    return RedirectToAction("Getall", "File");
                 }
             }
-            return View(model);
+            return RedirectToAction("Getall", "File");
         }
 
         [Authorize]
         public async Task<ActionResult> GetAll()
         {
             var list = await UnitOfWorkService.FileService.GetAllAsync();
-            var model = list.Where(p => p.UserId == User.Identity.Name);
+            var pages = list.Where(p => p.UserId == User.Identity.Name).ToList().Count();
+            var fileInfoDtos = list.Where(p => p.UserId == User.Identity.Name).Take(numberOfObjectsPerPage).ToList();
+            var model = new FilesListViewModel()
+            {
+                Files = fileInfoDtos,
+                Pages = pages / numberOfObjectsPerPage
+            }; 
             return View(model);
         }
 
         [Authorize]
-        public async Task<PartialViewResult> _GetAll(string search)
+        public async Task<ActionResult> _GetAll(string searchString)
         {
             var list = await UnitOfWorkService.FileService.GetAllAsync();
-            var model = list.Where(p => p.UserId == User.Identity.Name);
-            var serchModel = model.Where(f => f.FileName.Contains(search));
+            var pages = list.Where(p => p.UserId == User.Identity.Name)
+                            .Where(f => f.FileName.Contains(searchString))
+                            .ToList().Count();
+            var fileInfoDtos = list.Where(p => p.UserId == User.Identity.Name)
+                            .Where(f => f.FileName.Contains(searchString))
+                            .Take(numberOfObjectsPerPage).ToList();
+            var serchModel = new FilesListViewModel()
+            {
+                Files = fileInfoDtos,
+                Pages = pages / numberOfObjectsPerPage,
+                SearchString = searchString
+            };
+            return PartialView("_Table", serchModel);
+        }
+
+        [Authorize]
+        public async Task<ActionResult> _Pages(FilesListViewModel viewModel)
+        {
+            var model = viewModel;
+            if (model.SearchString == null)
+            {
+                model.SearchString = "";
+            }
+
+            var list = await UnitOfWorkService.FileService.GetAllAsync();
+            var fileInfoDtos = list.Where(p => p.UserId == User.Identity.Name)
+                                   .Where(f => f.FileName.Contains(model.SearchString))
+                                   .Skip(numberOfObjectsPerPage * model.Pages)
+                                   .Take(numberOfObjectsPerPage).ToList();
+            var pages = list.Count() / numberOfObjectsPerPage;
+            var serchModel = new FilesListViewModel()
+            {
+                Files = fileInfoDtos,
+                Pages = pages,
+                SearchString = model.SearchString
+            };
             return PartialView("_TableBody", serchModel);
         }
+
+        [HttpPost]
         public async Task<ActionResult> Download(string id)
         {
             var fileDownloadInfo = await UnitOfWorkService.FileService.DownloadAsync(id, Server.MapPath("~"));

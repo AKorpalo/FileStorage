@@ -13,7 +13,7 @@ using Ninject;
 namespace FileStorage.PL.WEB.Controllers
 {
     [Authorize(Roles = "admin, moderator")]
-    public class AdminController : Controller
+    public class AdminController : LangController
     {
         [Inject]
         public IUnitOfWorkService UnitOfWorkService { get; set; }
@@ -57,8 +57,10 @@ namespace FileStorage.PL.WEB.Controllers
             var result = await UnitOfWorkService.UserProfileService.UpdateAsync(user);
             if (result.Succedeed)
             {
+                TempData["SuccessMessage"] = result.Message;
                 return RedirectToAction("ShowUsers");
             }
+            TempData["ErrorMessage"] = result.Message;
             return View(model);
         }
 
@@ -80,16 +82,24 @@ namespace FileStorage.PL.WEB.Controllers
             var result = UnitOfWorkService.RoleService.AddRole(model.Id, model.RoleName);
             if (result.Succedeed)
             {
+                TempData["SuccessMessage"] = result.Message;
                 return RedirectToAction("AddRole",new{ userId = model.Id});
             }
+            TempData["ErrorMessage"] = result.Message;
             return RedirectToAction("AddRole", new { userId = model.Id });
         }
 
         [HttpPost]
         [Authorize(Roles = "admin")]
-        public ActionResult _Roles(string userId, string role)
+        public ActionResult DeleteRole(string userId, string role)
         {
-            UnitOfWorkService.RoleService.DeleteRole(userId, role);
+            var result = UnitOfWorkService.RoleService.DeleteRole(userId, role);
+            if (result.Succedeed)
+            {
+                TempData["SuccessMessage"] = result.Message;
+                return RedirectToAction("AddRole", "Admin", new {userId});
+            }
+            TempData["ErrorMessage"] = result.Message;
             return RedirectToAction("AddRole","Admin",new{ userId });
         }
     }

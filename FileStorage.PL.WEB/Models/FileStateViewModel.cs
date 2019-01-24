@@ -9,7 +9,7 @@ namespace FileStorage.PL.WEB.Models
     public class FileStateViewModel
     {
         public string Id { get; set; }
-        [DisplayName("Статус файлу")]
+        [DisplayName("Приватний?")]
         public bool IsPrivate { get; set; }
     }
 }

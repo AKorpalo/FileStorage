@@ -1,7 +1,7 @@
-﻿@model IEnumerable<FileStorage.BLL.DTO.FileInfoDTO>
+﻿@model FileStorage.PL.WEB.Models.FilesListViewModel
+@using System.Collections.Generic;
 
-
-@foreach (var item in Model)
+@foreach (var item in Model.Files)
 {
     <tr>
         <td>

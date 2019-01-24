@@ -1,0 +1,12 @@
+﻿@model FileStorage.PL.WEB.Models.FilesListViewModel
+@using System.Collections.Generic;
+
+<table class="table table-bordered">
+    <thead>
+        @Html.Partial("_TableHead", Model.Files)
+    </thead>
+    <tbody  id="data">
+        @Html.Partial("_TableBody", Model)
+    </tbody>
+</table>
+@Html.Partial("_Pages", Model)

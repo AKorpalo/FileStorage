@@ -9,7 +9,7 @@ using Ninject;
 
 namespace FileStorage.PL.WEB.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : LangController
     {
         [Inject]
         public IUnitOfWorkService UnitOfWorkService { get; set; }
