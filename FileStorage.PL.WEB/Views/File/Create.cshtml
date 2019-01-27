@@ -1,17 +1,17 @@
-﻿@model FileStorage.PL.WEB.Models.FileStateViewModel
+﻿@using App_LocalResources
+@model FileStorage.PL.WEB.Models.FileStateViewModel
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = Resource.Create;
 }
 
-<h2>Create</h2>
+<h2>@Resource.NewFile</h2>
 
 @using (Html.BeginForm("Create", "File", FormMethod.Post, new { enctype = "multipart/form-data" })) 
 {
     @Html.AntiForgeryToken()
     
 <div class="form-horizontal">
-    <h4>FileCreateViewModel</h4>
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <div class="form-group">
@@ -24,7 +24,7 @@
         </div>
     </div>
     <div class="form-group">
-        <span class="control-label col-md-2" >Файл</span>
+        <span class="control-label col-md-2" >@Resource.File</span>
         <div class="col-md-10">
             <div>
                 <input type="file" name="File">
@@ -34,12 +34,12 @@
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Create" class="btn btn-default" />
+            <input type="submit" value="@Resource.Download" class="btn btn-default" />
         </div>
     </div>
 </div>
 }
 
 <div>
-    @Html.ActionLink("Головна", "GetAll")
+    @Html.ActionLink(Resource.BackToList, "GetAll")
 </div>

@@ -1,5 +1,6 @@
-﻿@model IEnumerable<FileStorage.BLL.DTO.UserDTO>
-@foreach (var item in Model)
+﻿@using App_LocalResources
+@model FileStorage.PL.WEB.Models.TableViewModel<FileStorage.BLL.DTO.UserDTO>
+@foreach (var item in Model.Items)
 {
     <tr>
         <td>
@@ -15,11 +16,25 @@
             @Html.DisplayFor(modelItem => item.MaxSize)
         </td>
         <td>
-            @Html.ActionLink("Edit", "EditUser", new { userId = item.Id }) 
+            <a href="/Admin/EditUser/?userId=@item.Id" class="btn btn-primary a-btn-slide-text">
+                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                <span ><strong></strong></span>            
+            </a>
+        </td>
             @if (User.IsInRole("admin"))
             {
-                <span>|</span> @Html.ActionLink("Role", "AddRole", new { userId = item.Id }) <span>|</span>
-                @Html.ActionLink("Delete", "_Delete", "ManageUserProfile", new { id = item.Id }, new { @class = "viewDialog", data_dialog_title = "Видалення" })}
-        </td>
+                <td>
+                    <a href="/Admin/AddRole/?userId=@item.Id" class="btn btn-primary a-btn-slide-text">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                        <span ><strong></strong></span>            
+                    </a>
+                </td>
+                <td>
+                    <a href="/ManageUserProfile/_Delete/@item.Id" class="btn btn-danger a-btn-slide-text viewDialog" data_dialog_title="@Resource.Delete">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        <span ><strong></strong></span>            
+                    </a>
+                </td>
+            }
     </tr>
 }

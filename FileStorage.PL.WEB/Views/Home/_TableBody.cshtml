@@ -1,6 +1,7 @@
-﻿@model IEnumerable<FileStorage.BLL.DTO.FileInfoDTO>
+﻿@using App_LocalResources
+@model FileStorage.PL.WEB.Models.TableViewModel<FileStorage.BLL.DTO.FileInfoDTO>
 
-@foreach (var item in Model)
+@foreach (var item in Model.Items)
 {
     <tr>
         <td>
@@ -16,11 +17,19 @@
             @Html.DisplayFor(modelItem => item.UserId)
         </td>
         <td>
-            @Html.ActionLink("Download", "_Download", "File", new { id = item.Id }, new { @class = "viewDialog", data_dialog_title = "Коротка ссилка" })
+            <a href="/File/_Download/@item.Id" class="btn btn-primary a-btn-slide-text viewDialog" data_dialog_title="@Resource.Download">
+                <span class="glyphicon glyphicon-file" aria-hidden="true"></span>
+                <span ><strong></strong></span>            
+            </a>
+        </td>
             @if (User.IsInRole("admin") || User.IsInRole("moderator"))
             {
-                <span>|</span> @Html.ActionLink("Delete", "_Delete","File", new { id = item.Id }, new { @class = "viewDialog", data_dialog_title = "Видалення" })
-            }
+        <td>
+            <a href="/File/_Delete/@item.Id" class="btn btn-danger a-btn-slide-text viewDialog" data_dialog_title="@Resource.Delete">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                <span><strong></strong></span>
+            </a>
         </td>
+            }
     </tr>
 }

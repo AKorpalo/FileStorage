@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using App_LocalResources;
 
 namespace FileStorage.PL.WEB.Models
 {
@@ -8,27 +10,27 @@ namespace FileStorage.PL.WEB.Models
     {
         public string Id { get; set; }
 
-        [DisplayName("Електрона адреса")]
+        [Display(Name = "Email", ResourceType = typeof(Resource))]
         public string Email { get; set; }
 
-        [DisplayName("Логін")]
+        [Display(Name = "UserName", ResourceType = typeof(Resource))]
         public string UserName { get; set; }
 
-        [DisplayName("Ім'я")]
+        [Display(Name = "FirstName", ResourceType = typeof(Resource))]
         public string FirstName { get; set; }
 
-        [DisplayName("Призвіще")]
+        [Display(Name = "SecondName", ResourceType = typeof(Resource))]
         public string SecondName { get; set; }
 
-        [DisplayName("Дата Народження")]
+        [Display(Name = "BirthDate", ResourceType = typeof(Resource))]
         [DataType(DataType.Date)]
         //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/mm/yyyy}")]
         public DateTime BirthDate { get; set; }
 
-        [DisplayName("Поточний розмір сховища")]
+        [Display(Name = "CurrentSize", ResourceType = typeof(Resource))]
         public double CurrentSize { get; set; }
 
-        [DisplayName("Максимальний розмір сховища")]
+        [Display(Name = "MaxSize", ResourceType = typeof(Resource))]
         public double MaxSize { get; set; }
 
     }

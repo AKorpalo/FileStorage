@@ -1,4 +1,5 @@
-﻿@model FileStorage.PL.WEB.Models.FileStateViewModel
+﻿@using App_LocalResources
+@model FileStorage.PL.WEB.Models.FileStateViewModel
 
 @using (Html.BeginForm("Edit", "File", FormMethod.Post))
 {
@@ -18,7 +19,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-2">
-                <input type="submit" value="Save" class="btn btn-primary center-block" />
+                <input type="submit" value="@Resource.Save" class="btn btn-primary center-block" />
             </div>
         </div>
     </div>

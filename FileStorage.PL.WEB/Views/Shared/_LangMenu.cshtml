@@ -1,14 +1,8 @@
 ﻿@using FileStorage.PL.WEB.Helpers
 
-<script>
-    $(function(){
-        $('.selectpicker').selectpicker();
-    });
-</script>
 <ul class="nav navbar-nav navbar-right">
     <li>
-        <select class="selectpicker" data-width="fit" onchange="location = this.value;">
-            <option>Оберіть</option>
+        <select class="selectpicker" data-style="btn-primary" data-width="fit" onchange="location = this.value;">
             @Url.LangSwitcher("en", ViewContext.RouteData, "en")
             @Url.LangSwitcher("uk", ViewContext.RouteData, "uk")
         </select>

@@ -1,7 +1,8 @@
-﻿@model FileStorage.PL.WEB.Models.UserProfileViewModel
+﻿@using App_LocalResources
+@model FileStorage.PL.WEB.Models.UserProfileViewModel
 
 @{
-    ViewBag.Title = "EditUser";
+    ViewBag.Title = Resource.Edit;
 }
 
 @if (TempData["SuccessMessage"] != null)
@@ -17,14 +18,13 @@
     </div>
 }
 
-<h2>EditUser</h2>
+<h2>@Resource.Edit</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <h4>UserProfileViewModel</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
@@ -63,12 +63,14 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="@Resource.Save"  class="btn btn-success" />
             </div>
         </div>
     </div>
 }
-
 <div>
-    @Html.ActionLink("Back to List", "ShowUsers")
+    <a href="/Admin/ShowUsers" class="btn btn-primary">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span><strong>@Resource.BackToList</strong></span>
+    </a>
 </div>

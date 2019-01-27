@@ -4,10 +4,11 @@
 
 <table class="table table-bordred table-striped">
     <thead>
-        @Html.Partial("_TableHead", Model.Items)
+    @Html.Partial("_TableHead", Model.Items)
     </thead>
     <tbody id="data">
-        @Html.Partial("_TableBody", Model)
+    @Html.Partial("_TableBody", Model)
     </tbody>
 </table>
 @Html.Partial("_Pages", new PagesViewModel { Pages = Model.Pages, SearchString = Model.SearchString })
+

@@ -3,14 +3,18 @@
     <th>
         @Html.DisplayNameFor(model => model.FileName)
     </th>
-    <th >
+    <th width="150px">
         @Html.DisplayNameFor(model => model.Size)
     </th>
-    <th >
+    <th width="200px">
         @Html.DisplayNameFor(model => model.DownloadDate)
     </th>
-    <th>
+    <th width="200px">
         @Html.DisplayNameFor(model => model.UserId)
     </th>
-    <th></th>
+    <th width="50px"></th>
+    @if (User.IsInRole("admin") || User.IsInRole("moderator"))
+    {
+        <th width="50px"></th>
+    }
 </tr>

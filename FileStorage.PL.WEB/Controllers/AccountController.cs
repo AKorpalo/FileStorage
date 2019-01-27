@@ -14,7 +14,7 @@ using Ninject;
 
 namespace FileStorage.PL.WEB.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : LangController
     {
         [Inject]
         public IUnitOfWorkService UnitOfWorkService { get; set; }
@@ -93,19 +93,6 @@ namespace FileStorage.PL.WEB.Controllers
         {
             AuthenticationManager.SignOut();
             return RedirectToAction("Login", "Account");
-        }
-
-        private async Task SetInitialDataAsync()
-        {
-            await UnitOfWorkService.UserService.SetInitialDataAsync(new RegisterDto()
-            {
-                Email = "KorpaloAndrew@gmail.com",
-                UserName = "Weynard",
-                Password = "qawsed",
-                FirstName = "Андрій",
-                SecondName = "Корпало",
-                BirthDate = DateTime.Parse("26.06.1996")
-            }, new List<string> { "user", "admin", "moderator"});
         }
     }
 }

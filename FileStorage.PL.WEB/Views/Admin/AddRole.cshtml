@@ -1,7 +1,8 @@
-﻿@model FileStorage.BLL.DTO.RolesDTO
+﻿@using App_LocalResources
+@model FileStorage.BLL.DTO.RolesDTO
 
 @{
-    ViewBag.Title = "AddRole";
+    ViewBag.Title = Resource.AddRole;
 }
 
 @if (TempData["SuccessMessage"] != null)
@@ -17,23 +18,23 @@
     </div>
 }
 
-<h2>AddRole</h2>
+<h2>@Resource.ChangeRoles</h2>
 
 
-Ролі користувача:
+@Resource.UserRoles
 <br />
 <table>
     @foreach (var role in Model.Roles)
     {
         <tr>
-            <td>&bull;</td>
-            <td>@role</td>
-            <td>
+            <td width="10">&bull;</td>
+            <td width="80">@role</td>
+            <td width="80">
                 @using (Html.BeginForm("DeleteRole", "Admin", FormMethod.Post))
                 {
                     <input style="display: none" type="text" name="userId" value="@Model.Id" />
                     <input style="display: none" type="text" name="role" value="@role" />
-                    <input type="submit" value="X" />
+                    <input class="btn btn-danger" type="submit" value="X" />
                 }
             </td>
         </tr>
@@ -44,24 +45,28 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <h4>RolesDTO</h4>
+    <div class="form-inline">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
-
-        @Html.DropDownList("RoleName",
-            new SelectList(ViewBag.Roles),
-            new { @class = "form-control" })
-
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                @Html.DropDownList("RoleName",
+                    new SelectList(ViewBag.Roles),
+                    new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input class="btn btn-success" type="submit" value="@Resource.Save" />
             </div>
         </div>
     </div>
 }
-
+<br />
 <div>
-    @Html.ActionLink("До списку", "ShowUsers")
+    <a href="/Admin/ShowUsers" class="btn btn-primary">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span><strong>@Resource.BackToList</strong></span>
+    </a>
 </div>

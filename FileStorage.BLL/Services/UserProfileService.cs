@@ -30,7 +30,7 @@ namespace FileStorage.BLL.Services
                 userProfile.BirthDate = userProfileDto.BirthDate;
                 if (Math.Abs(userProfileDto.MaxSize) > 0)
                 {
-                    userProfile.MaxSize = userProfileDto.MaxSize;
+                    userProfile.MaxSize = userProfileDto.MaxSize * 1000000;
                 } 
                 _database.UserProfileRepository.Update(userProfile);
                 await _database.SaveAsync();
@@ -44,6 +44,8 @@ namespace FileStorage.BLL.Services
             if (userProfile != null)
             {
                 var mapper = new MapperConfiguration(cfg => cfg.CreateMap<UserProfile, UserDTO>()
+                    .ForMember(x => x.CurrentSize, opt => opt.MapFrom(c => c.CurrentSize / 1000000))
+                    .ForMember(x => x.MaxSize, opt => opt.MapFrom(c => c.MaxSize / 1000000))
                     .ForMember(x => x.Email, opt => opt.MapFrom(c => c.ApplicationUser.Email))
                     .ForMember(x => x.UserName, opt => opt.MapFrom(c => c.ApplicationUser.UserName))
                     .ForMember(x => x.Email, opt => opt.MapFrom(c => c.ApplicationUser.Email))
@@ -57,6 +59,8 @@ namespace FileStorage.BLL.Services
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<UserProfile, UserDTO>()
                 .ForMember(x => x.Email, opt => opt.MapFrom(c => c.ApplicationUser.Email))
+                .ForMember(x => x.CurrentSize, opt => opt.MapFrom(c => c.CurrentSize / 1000000))
+                .ForMember(x => x.MaxSize, opt => opt.MapFrom(c => c.MaxSize / 1000000))
                 .ForMember(x => x.UserName, opt => opt.MapFrom(c => c.ApplicationUser.UserName))
             ).CreateMapper();
             var list = await _database.UserProfileRepository.GetAllAsync();

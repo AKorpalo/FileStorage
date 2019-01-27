@@ -1,7 +1,8 @@
-﻿@model FileStorage.PL.WEB.Models.FilesListViewModel
+﻿@model FileStorage.PL.WEB.Models.TableViewModel<FileStorage.BLL.DTO.FileInfoDTO>
 @using System.Collections.Generic;
+@using App_LocalResources
 @{
-    ViewBag.Title = "GetAll";
+    ViewBag.Title = Resource.Files;
 }
 
 @if (TempData["SuccessMessage"] != null)
@@ -27,7 +28,7 @@
                     @Html.Partial("_Search")
                 </div>
                 <div class="col-sm-4">
-                    <button type="button" class="btn btn-info add-new" onclick="window.location.href='/File/Create'"><i class="fa fa-plus"></i>Новий файл</button>
+                    <button type="button" class="btn btn-info add-new" onclick="window.location.href='/File/Create'"><i class="fa fa-plus"></i>@Resource.NewFile</button>
                 </div>
             </div>
         </div>

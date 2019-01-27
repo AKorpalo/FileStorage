@@ -1,17 +1,18 @@
-﻿<div class="search-box">
-    @using (Ajax.BeginForm("_Update",
+﻿@using App_LocalResources
+<div class="search-box">
+    @using (Ajax.BeginForm("_Search",
         new AjaxOptions
         {
-            UpdateTargetId = "data",
+            UpdateTargetId = "tabl",
             LoadingElementId = "loading",
             LoadingElementDuration = 10
         }
         ))
     {
         <i class="material-icons">&#xE8B6;</i>
-        <input type="text" name="search" class="form-control" placeholder="Search&hellip;">
+        <input type="text" name="searchString" class="form-control" placeholder="@Resource.Search&hellip;">
     }
 </div>
 <div id="loading" style="display:none; color:black; font-weight:bold;">
-    <p>Йде пошук...</p>
+    <p>@Resource.Loading ...</p>
 </div>

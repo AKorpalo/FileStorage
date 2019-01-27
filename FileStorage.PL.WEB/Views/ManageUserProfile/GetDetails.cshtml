@@ -1,7 +1,8 @@
-﻿@model FileStorage.PL.WEB.Models.UserViewModel
+﻿@using App_LocalResources
+@model FileStorage.PL.WEB.Models.UserViewModel
 
 @{
-    ViewBag.Title = "GetDetails";
+    ViewBag.Title = Resource.Details;
 }
 
 @if (TempData["SuccessMessage"] != null)
@@ -16,34 +17,7 @@
         @TempData["ErrorMessage"]
     </div>
 }
-<style>
-    input.hidden {
-        position: absolute;
-        left: -9999px;
-    }
-
-    #profile-image1 {
-        cursor: pointer;
-  
-        width: 100px;
-        height: 100px;
-        border:2px solid #03b1ce ;}
-    .tital{ font-size:16px; font-weight:500;}
-    .bot-border{ border-bottom:1px #d0d0d0 solid;  margin:5px 0  5px 0}	
-    a.btn:hover {
-        -webkit-transform: scale(1.1);
-        -moz-transform: scale(1.1);
-        -o-transform: scale(1.1);
-    }
-    a.btn {
-        -webkit-transform: scale(0.8);
-        -moz-transform: scale(0.8);
-        -o-transform: scale(0.8);
-        -webkit-transition-duration: 0.5s;
-        -moz-transition-duration: 0.5s;
-        -o-transition-duration: 0.5s;
-    }
-</style>
+<link href="~/Content/MyUserDetails.css" rel="stylesheet">
 <script>
     $(function() {
         $('#profile-image1').on('click', function() {
@@ -63,11 +37,9 @@
                                     <div align="center">
                                         <img alt="User Pic" src="https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg" id="profile-image1" class="img-circle img-responsive">
                                         <input id="profile-image-upload" class="hidden" type="file">
-                                        <div style="color:#999;">click here to change profile image</div>
-                                        <!--Upload Image Js And Css-->
+                                        @*<div style="color:#999;">click here to change profile image</div>*@
                                     </div>
                                     <br>
-                                    <!-- /input-group -->
                                 </div>
                                 <div class="col-sm-6">
                                     <h4 style="color:#00b1b1;">@Html.DisplayFor(model => model.FirstName) @Html.DisplayFor(model => model.SecondName) </h4></span>
@@ -98,21 +70,17 @@
                                 <div class="col-sm-5 col-xs-6 tital ">@Html.DisplayNameFor(model => model.MaxSize)</div><div class="col-sm-7">@Html.DisplayFor(model => model.MaxSize)</div>
                                 <div class="clearfix"></div>
                                 <div class="bot-border"></div>
-                                <!-- /.box-body -->
                             </div>
-                            <!-- /.box -->
                             <p>
                                 <a onclick="window.location.href='/ManageUserProfile/Edit/@Model.Id'" class="btn btn-primary a-btn-slide-text ">
                                     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                                    <span><strong>Edit</strong></span>            
+                                    <span><strong>@Resource.Edit</strong></span>            
                                 </a>
-                                
-                                <a href="/ManageUserProfile/_Delete/@Model.Id" class="btn btn-primary a-btn-slide-text viewDialog" data_dialog_title="Видалення">
+
+                                <a href="/ManageUserProfile/_Delete/@Model.Id" class="btn btn-primary a-btn-slide-text viewDialog" data_dialog_title="@Resource.Delete">
                                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                    <span ><strong>Delete</strong></span>            
+                                    <span ><strong>@Resource.Delete</strong></span>            
                                 </a>
-                                @*@Html.ActionLink("Змінити", "Edit", new {id = Model.Id}) |
-                                @Html.ActionLink("Видалити", "_Delete", new {id = Model.Id}, new {@class = "viewDialog", data_dialog_title = "Видалення"})*@
                             </p>
                         </div>
                     </div>

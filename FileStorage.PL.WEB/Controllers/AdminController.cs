@@ -17,17 +17,96 @@ namespace FileStorage.PL.WEB.Controllers
     {
         [Inject]
         public IUnitOfWorkService UnitOfWorkService { get; set; }
+        private int _numberOfObjectsPerPage = 2;
+
         public async Task<ActionResult> ShowUsers()
         {
-            var model = await UnitOfWorkService.UserProfileService.GetAllUsersAsync();
+            var list = await UnitOfWorkService.UserProfileService.GetAllUsersAsync();
+            var fileInfoList = list.ToList();
+
+            var pages = fileInfoList.Count;
+
+            if (pages % _numberOfObjectsPerPage != 0)
+            {
+                pages /= _numberOfObjectsPerPage;
+                pages++;
+            }
+            else
+            {
+                pages /= _numberOfObjectsPerPage;
+            }
+
+            var fileInfoDtos = fileInfoList.Take(_numberOfObjectsPerPage).ToList();
+            var model = new TableViewModel<UserDTO>()
+            {
+                Items = fileInfoDtos,
+                Pages = pages
+            };
             return View(model);
         }
-        public async Task<PartialViewResult> _Update(string search)
+
+        public async Task<PartialViewResult> _Search(string searchString)
         {
-            var model = await UnitOfWorkService.UserProfileService.GetAllUsersAsync();
-            var serchModel = model.Where(f => f.UserName.Contains(search));
+            var list = await UnitOfWorkService.UserProfileService.GetAllUsersAsync();
+            var fileInfoList = list .Where(f => f.UserName.ToLower().Contains(searchString.ToLower())).ToList();
+
+            var pages = fileInfoList.Count;
+
+            if (pages % _numberOfObjectsPerPage != 0)
+            {
+                pages /= _numberOfObjectsPerPage;
+                pages++;
+            }
+            else
+            {
+                pages /= _numberOfObjectsPerPage;
+            }
+
+            var fileInfoDtos = fileInfoList.Take(_numberOfObjectsPerPage).ToList();
+            var serchModel = new TableViewModel<UserDTO>()
+            {
+                Items = fileInfoDtos,
+                Pages = pages,
+                SearchString = searchString
+            };
+            return PartialView("_Table", serchModel);
+        }
+
+        public async Task<ActionResult> _Pages(PagesViewModel viewModel)
+        {
+            var model = viewModel;
+            if (model.SearchString == null)
+            {
+                model.SearchString = "";
+            }
+
+            var list = await UnitOfWorkService.UserProfileService.GetAllUsersAsync();
+            var fileInfoList = list.ToList();
+
+            var pages = fileInfoList.Count;
+
+            if (pages % _numberOfObjectsPerPage != 0)
+            {
+                pages /= _numberOfObjectsPerPage;
+                pages++;
+            }
+            else
+            {
+                pages /= _numberOfObjectsPerPage;
+            }
+            var fileInfoDtos = fileInfoList.Where(f => f.UserName.ToLower().Contains(model.SearchString.ToLower()))
+                .Skip(_numberOfObjectsPerPage * model.Pages)
+                .Take(_numberOfObjectsPerPage).ToList();
+
+            var serchModel = new TableViewModel<UserDTO>()
+            {
+                Items = fileInfoDtos,
+                Pages = pages,
+                SearchString = model.SearchString
+            };
             return PartialView("_TableBody", serchModel);
         }
+
         public async Task<ActionResult> EditUser(string userId)
         {
             var details = await UnitOfWorkService.UserProfileService.GetAllDetailsByIdAsync(userId);

@@ -1,7 +1,8 @@
-﻿@model IEnumerable<FileStorage.BLL.DTO.UserDTO>
+﻿@using App_LocalResources
+@model FileStorage.PL.WEB.Models.TableViewModel<FileStorage.BLL.DTO.UserDTO>
 
 @{
-    ViewBag.Title = "ShowUsers";
+    ViewBag.Title = Resource.Users;
 }
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -27,13 +28,8 @@
                 </div>
             </div>
         </div>
-        <table class="table table-bordered">
-            <thead>
-                @Html.Partial("_TableHead", @Model)
-            </thead>
-            <tbody id="data">
-                @Html.Partial("_TableBody", @Model)
-            </tbody>
-        </table>
+        <div id="tabl">
+            @Html.Partial("_Table", Model)
+        </div>
     </div>
 </div>

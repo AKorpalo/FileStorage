@@ -1,9 +1,10 @@
-﻿@model FileStorage.BLL.DTO.FileInfoDTO
+﻿@using App_LocalResources
+@model FileStorage.BLL.DTO.FileInfoDTO
 
 @{
-    ViewBag.Title = "Delete";
+    ViewBag.Title = Resource.Delete;
 }
-<h3>Ви впевнені що хочете видалити цей файл?</h3>
+<h3>@Resource.DeleteFileMes</h3>
 <div>
     <dl class="dl-horizontal">
         <dt>
@@ -53,7 +54,7 @@
         @Html.AntiForgeryToken()
         @Html.HiddenFor(model => model.Id)
         <div class="form-actions no-color">
-            <input type="submit" value="Видалити" class="btn btn-primary center-block"/> 
+            <input type="submit" value="@Resource.Delete" class="btn btn-primary center-block"/> 
         </div>
     }
 </div>

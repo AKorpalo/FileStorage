@@ -18,7 +18,7 @@ namespace FileStorage.PL.WEB.Controllers
         [Inject]
         public IUnitOfWorkService UnitOfWorkService { get; set; }
 
-        private int numberOfObjectsPerPage = 2 ;
+        private int _numberOfObjectsPerPage = 2 ;
         public ActionResult Create()
         {
             return View();
@@ -64,37 +64,60 @@ namespace FileStorage.PL.WEB.Controllers
         public async Task<ActionResult> GetAll()
         {
             var list = await UnitOfWorkService.FileService.GetAllAsync();
-            var pages = list.Where(p => p.UserId == User.Identity.Name).ToList().Count();
-            var fileInfoDtos = list.Where(p => p.UserId == User.Identity.Name).Take(numberOfObjectsPerPage).ToList();
-            var model = new FilesListViewModel()
+            var fileInfoList = list.Where(p => p.UserId == User.Identity.Name).ToList();
+
+            var pages = fileInfoList.Count;
+
+            if (pages % _numberOfObjectsPerPage != 0)
             {
-                Files = fileInfoDtos,
-                Pages = pages / numberOfObjectsPerPage
+                pages /= _numberOfObjectsPerPage;
+                pages++;
+            }
+            else
+            {
+                pages /= _numberOfObjectsPerPage;
+            }
+
+            var fileInfoDtos = fileInfoList.Take(_numberOfObjectsPerPage).ToList();
+            var model = new TableViewModel<FileInfoDTO>()
+            {
+                Items = fileInfoDtos,
+                Pages = pages
             }; 
             return View(model);
         }
 
         [Authorize]
-        public async Task<ActionResult> _GetAll(string searchString)
+        public async Task<ActionResult> _Search(string searchString)
         {
             var list = await UnitOfWorkService.FileService.GetAllAsync();
-            var pages = list.Where(p => p.UserId == User.Identity.Name)
-                            .Where(f => f.FileName.Contains(searchString))
-                            .ToList().Count();
-            var fileInfoDtos = list.Where(p => p.UserId == User.Identity.Name)
-                            .Where(f => f.FileName.Contains(searchString))
-                            .Take(numberOfObjectsPerPage).ToList();
-            var serchModel = new FilesListViewModel()
+            var fileInfoList = list.Where(p => p.UserId == User.Identity.Name)
+                                   .Where(f => f.FileName.ToLower().Contains(searchString.ToLower())).ToList();
+
+            var pages = fileInfoList.Count;
+
+            if (pages % _numberOfObjectsPerPage != 0)
             {
-                Files = fileInfoDtos,
-                Pages = pages / numberOfObjectsPerPage,
+                pages /= _numberOfObjectsPerPage;
+                pages++;
+            }
+            else
+            {
+                pages /= _numberOfObjectsPerPage;
+            }
+
+            var fileInfoDtos = fileInfoList.Take(_numberOfObjectsPerPage).ToList();
+            var serchModel = new TableViewModel<FileInfoDTO>()
+            {
+                Items = fileInfoDtos,
+                Pages = pages,
                 SearchString = searchString
             };
             return PartialView("_Table", serchModel);
         }
 
         [Authorize]
-        public async Task<ActionResult> _Pages(FilesListViewModel viewModel)
+        public async Task<ActionResult> _Pages(PagesViewModel viewModel)
         {
             var model = viewModel;
             if (model.SearchString == null)
@@ -103,14 +126,27 @@ namespace FileStorage.PL.WEB.Controllers
             }
 
             var list = await UnitOfWorkService.FileService.GetAllAsync();
-            var fileInfoDtos = list.Where(p => p.UserId == User.Identity.Name)
-                                   .Where(f => f.FileName.Contains(model.SearchString))
-                                   .Skip(numberOfObjectsPerPage * model.Pages)
-                                   .Take(numberOfObjectsPerPage).ToList();
-            var pages = list.Count() / numberOfObjectsPerPage;
-            var serchModel = new FilesListViewModel()
+            var fileInfoList = list.ToList();
+
+            var pages = fileInfoList.Count;
+
+            if (pages % _numberOfObjectsPerPage != 0)
             {
-                Files = fileInfoDtos,
+                pages /= _numberOfObjectsPerPage;
+                pages++;
+            }
+            else
+            {
+                pages /= _numberOfObjectsPerPage;
+            }
+            var fileInfoDtos = fileInfoList.Where(p => p.UserId == User.Identity.Name)
+                                   .Where(f => f.FileName.ToLower().Contains(model.SearchString.ToLower()))
+                                   .Skip(_numberOfObjectsPerPage * model.Pages)
+                                   .Take(_numberOfObjectsPerPage).ToList();
+            
+            var serchModel = new TableViewModel<FileInfoDTO>()
+            {
+                Items = fileInfoDtos,
                 Pages = pages,
                 SearchString = model.SearchString
             };

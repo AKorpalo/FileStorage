@@ -210,7 +210,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\LangHelper.cs" />
-    <Compile Include="Models\FilesListViewModel.cs" />
+    <Compile Include="Models\PagesViewModel.cs" />
+    <Compile Include="Models\TableViewModel.cs" />
     <Compile Include="Models\FileStateViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
@@ -225,6 +226,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\MyUserDetails.css" />
     <Content Include="Content\Register.css" />
     <Content Include="Content\SingIn.css" />
     <Content Include="Content\Table.css" />
@@ -306,15 +308,12 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\ManageUserProfile\GetDetails.cshtml" />
     <Content Include="Views\ManageUserProfile\Edit.cshtml" />
     <Content Include="Views\File\GetAll.cshtml" />
-    <Content Include="Views\File\_Search.cshtml" />
     <Content Include="Views\File\_TableHead.cshtml" />
     <Content Include="Views\File\_TableBody.cshtml" />
     <Content Include="Views\File\Create.cshtml" />
@@ -323,19 +322,20 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\_TableBody.cshtml" />
     <Content Include="Views\Home\_TableHead.cshtml" />
-    <Content Include="Views\Home\_Search.cshtml" />
     <Content Include="Views\Admin\ShowUsers.cshtml" />
     <Content Include="Views\Admin\_TableBody.cshtml" />
     <Content Include="Views\Admin\_TableHead.cshtml" />
-    <Content Include="Views\Admin\_Search.cshtml" />
     <Content Include="Views\Admin\EditUser.cshtml" />
     <Content Include="Views\Admin\AddRole.cshtml" />
-    <Content Include="Views\Admin\_RolesList.cshtml" />
     <Content Include="Views\File\_Download.cshtml" />
     <Content Include="Views\ManageUserProfile\_Delete.cshtml" />
     <Content Include="Views\Shared\_LangMenu.cshtml" />
-    <Content Include="Views\File\_Pages.cshtml" />
     <Content Include="Views\File\_Table.cshtml" />
+    <Content Include="Views\Home\_Table.cshtml" />
+    <Content Include="Views\Admin\_Table.cshtml" />
+    <Content Include="Views\Shared\_Search.cshtml" />
+    <Content Include="Views\Shared\_Pages.cshtml" />
+    <Content Include="Views\Shared\_Footer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Files\" />

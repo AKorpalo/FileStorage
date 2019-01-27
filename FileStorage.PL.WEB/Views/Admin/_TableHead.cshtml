@@ -12,5 +12,10 @@
     <th>
         @Html.DisplayNameFor(model => model.MaxSize)
     </th>
-    <th></th>
+    <th width="50px"></th>
+    @if (User.IsInRole("admin"))
+    {
+        <th width="50px"></th>
+        <th width="50px"></th>
+    }
 </tr>

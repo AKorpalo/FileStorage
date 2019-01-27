@@ -46,6 +46,8 @@ namespace FileStorage.DAL.EF
             };
             userManager.Create(admin, "qawsed");
             userManager.AddToRole(admin.Id, "admin");
+            userManager.AddToRole(admin.Id, "user");
+            userManager.AddToRole(admin.Id, "moderator");
             db.UserProfiles.Add(adminProfile);
 
 

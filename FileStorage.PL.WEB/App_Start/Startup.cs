@@ -19,7 +19,7 @@ namespace FileStorage.PL.WEB.App_Start
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = new PathString("/Account/Login"),
-                ExpireTimeSpan = TimeSpan.FromMinutes(1)
+                ExpireTimeSpan = TimeSpan.FromHours(1)
             });
         }
     }

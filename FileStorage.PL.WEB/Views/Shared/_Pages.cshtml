@@ -1,0 +1,13 @@
+﻿@model FileStorage.PL.WEB.Models.PagesViewModel
+@using System.Collections.Generic;
+
+<div class="clearfix"></div>
+<ul class="pagination pull-right">
+    @for (int i = 0; i < Model.Pages; i++)
+    {
+        if (Model.Pages != 1)
+        {
+            <li> @Ajax.ActionLink($"{i + 1}", "_Pages", new { Pages = i, SearchString = Model.SearchString }, new AjaxOptions { UpdateTargetId = "data" })</li>
+        }
+    }
+</ul>

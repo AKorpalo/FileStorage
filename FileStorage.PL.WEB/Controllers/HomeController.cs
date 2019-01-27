@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using FileStorage.BLL.DTO;
 using FileStorage.BLL.Interfaces;
+using FileStorage.PL.WEB.Models;
 using Ninject;
 
 namespace FileStorage.PL.WEB.Controllers
@@ -13,17 +15,95 @@ namespace FileStorage.PL.WEB.Controllers
     {
         [Inject]
         public IUnitOfWorkService UnitOfWorkService { get; set; }
+
+        private int _numberOfObjectsPerPage = 2;
+
         public async Task<ActionResult> Index()
         {
             var list = await UnitOfWorkService.FileService.GetAllAsync();
-            var model = list.Where(p => p.IsPrivate == false);
+            var fileInfoList = list.Where(p => p.IsPrivate == false).ToList();
+
+            var pages = fileInfoList.Count;
+
+            if (pages % _numberOfObjectsPerPage != 0)
+            {
+                pages /= _numberOfObjectsPerPage;
+                pages++;
+            }
+            else
+            {
+                pages /= _numberOfObjectsPerPage;
+            }
+
+            var fileInfoDtos = fileInfoList.Take(_numberOfObjectsPerPage).ToList();
+            var model = new TableViewModel<FileInfoDTO>()
+            {
+                Items = fileInfoDtos,
+                Pages = pages
+            };
             return View(model);
         }
-        public async Task<PartialViewResult> _Update(string search)
+        public async Task<ActionResult> _Search(string searchString)
         {
             var list = await UnitOfWorkService.FileService.GetAllAsync();
-            var model = list.Where(p => p.IsPrivate == false);
-            var serchModel = model.Where(f => f.FileName.Contains(search));
+            var fileInfoList = list.Where(p => p.IsPrivate == false)
+                .Where(f => f.FileName.ToLower().Contains(searchString.ToLower())).ToList();
+
+            var pages = fileInfoList.Count;
+
+            if (pages % _numberOfObjectsPerPage != 0)
+            {
+                pages /= _numberOfObjectsPerPage;
+                pages++;
+            }
+            else
+            {
+                pages /= _numberOfObjectsPerPage;
+            }
+
+            var fileInfoDtos = fileInfoList.Take(_numberOfObjectsPerPage).ToList();
+            var serchModel = new TableViewModel<FileInfoDTO>()
+            {
+                Items = fileInfoDtos,
+                Pages = pages,
+                SearchString = searchString
+            };
+            return PartialView("_Table", serchModel);
+        }
+
+        public async Task<ActionResult> _Pages(PagesViewModel viewModel)
+        {
+            var model = viewModel;
+            if (model.SearchString == null)
+            {
+                model.SearchString = "";
+            }
+
+            var list = await UnitOfWorkService.FileService.GetAllAsync();
+            var fileInfoList = list.ToList();
+
+            var pages = fileInfoList.Count;
+
+            if (pages % _numberOfObjectsPerPage != 0)
+            {
+                pages /= _numberOfObjectsPerPage;
+                pages++;
+            }
+            else
+            {
+                pages /= _numberOfObjectsPerPage;
+            }
+            var fileInfoDtos = fileInfoList.Where(p => p.IsPrivate == false)
+                                           .Where(f => f.FileName.ToLower().Contains(model.SearchString.ToLower()))
+                                           .Skip(_numberOfObjectsPerPage * model.Pages)
+                                           .Take(_numberOfObjectsPerPage).ToList();
+
+            var serchModel = new TableViewModel<FileInfoDTO>()
+            {
+                Items = fileInfoDtos,
+                Pages = pages,
+                SearchString = model.SearchString
+            };
             return PartialView("_TableBody", serchModel);
         }
     }

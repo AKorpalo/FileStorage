@@ -1,0 +1,14 @@
+﻿@model FileStorage.PL.WEB.Models.TableViewModel<FileStorage.BLL.DTO.UserDTO>
+@using System.Collections.Generic;
+@using FileStorage.PL.WEB.Models
+
+<table class="table table-bordred table-striped">
+    <thead>
+    @Html.Partial("_TableHead", Model.Items)
+    </thead>
+    <tbody id="data">
+    @Html.Partial("_TableBody", Model)
+    </tbody>
+</table>
+@Html.Partial("_Pages", new PagesViewModel{Pages = Model.Pages, SearchString = Model.SearchString})
+

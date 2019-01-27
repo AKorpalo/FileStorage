@@ -1,13 +1,14 @@
-﻿@model string
+﻿@using App_LocalResources
+@model string
 
-<h3>Ви впевнені що хочете видалити профіль?</h3>
+<h3>@Resource.UserDeleteMes</h3>
 
 @using (Html.BeginForm("Delete", "ManageUserProfile"))
 {
     @Html.Hidden("id",Model)
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Видалити" class="btn btn-default" />
+            <input type="submit" value="@Resource.Delete" class="btn btn-default" />
         </div>
     </div>
 }

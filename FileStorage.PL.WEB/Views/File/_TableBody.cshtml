@@ -1,7 +1,8 @@
-﻿@model FileStorage.PL.WEB.Models.FilesListViewModel
+﻿@model FileStorage.PL.WEB.Models.TableViewModel<FileStorage.BLL.DTO.FileInfoDTO>
 @using System.Collections.Generic;
+@using App_LocalResources
 
-@foreach (var item in Model.Files)
+@foreach (var item in Model.Items)
 {
     <tr>
         <td>
@@ -20,9 +21,23 @@
             @Html.DisplayFor(modelItem => item.UserId)
         </td>
         <td>
-            @Html.ActionLink("Edit", "_Edit", new { id = item.Id }, new { @class = "viewDialog", data_dialog_title = "Редагування" }) |
-            @Html.ActionLink("Download", "_Download", new { id = item.Id }, new { @class = "viewDialog", data_dialog_title = "Коротка ссилка" }) |
-            @Html.ActionLink("Delete", "_Delete", new { id = item.Id }, new { @class = "viewDialog", data_dialog_title = "Видалення" })
+            <a href="/File/_Edit/@item.Id" class="btn btn-primary a-btn-slide-text viewDialog" data_dialog_title="@Resource.Edit">
+                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                <span ><strong></strong></span>            
+            </a>
+        </td>
+        <td>
+            <a href="/File/_Download/@item.Id" class="btn btn-primary a-btn-slide-text viewDialog" data_dialog_title="@Resource.ShortLink">
+                <span class="glyphicon glyphicon-file" aria-hidden="true"></span>
+                <span ><strong></strong></span>            
+            </a>
+        </td>
+        <td>
+
+            <a href="/File/_Delete/@item.Id" class="btn btn-danger a-btn-slide-text viewDialog" data_dialog_title="@Resource.Delete">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                <span ><strong></strong></span>
+            </a>
         </td>
     </tr>
 }
