@@ -18,7 +18,7 @@ namespace FileStorage.PL.WEB.Controllers
         [Inject]
         public IUnitOfWorkService UnitOfWorkService { get; set; }
 
-        private int _numberOfObjectsPerPage = 2 ;
+        private int _numberOfObjectsPerPage = 5;
         public ActionResult Create()
         {
             return View();
@@ -46,7 +46,15 @@ namespace FileStorage.PL.WEB.Controllers
                         InputStream = file.InputStream
                     };
 
-                    var result = await UnitOfWorkService.FileService.CreateAsync(fileDto);
+                    OperationDetails result;
+                    try
+                    {
+                        result = await UnitOfWorkService.FileService.CreateAsync(fileDto);
+                    }
+                    catch
+                    {
+                        return View("Error");
+                    }
 
                     if (result.Succedeed)
                     {
@@ -63,7 +71,16 @@ namespace FileStorage.PL.WEB.Controllers
         [Authorize]
         public async Task<ActionResult> GetAll()
         {
-            var list = await UnitOfWorkService.FileService.GetAllAsync();
+            IEnumerable<FileInfoDTO> list;
+            try
+            {
+                list = await UnitOfWorkService.FileService.GetAllAsync();
+            }
+            catch
+            {
+                return View("Error");
+            }
+
             var fileInfoList = list.Where(p => p.UserId == User.Identity.Name).ToList();
 
             var pages = fileInfoList.Count;
@@ -90,7 +107,15 @@ namespace FileStorage.PL.WEB.Controllers
         [Authorize]
         public async Task<ActionResult> _Search(string searchString)
         {
-            var list = await UnitOfWorkService.FileService.GetAllAsync();
+            IEnumerable<FileInfoDTO> list;
+            try
+            {
+                list = await UnitOfWorkService.FileService.GetAllAsync();
+            }
+            catch
+            {
+                return View("Error");
+            }
             var fileInfoList = list.Where(p => p.UserId == User.Identity.Name)
                                    .Where(f => f.FileName.ToLower().Contains(searchString.ToLower())).ToList();
 
@@ -125,7 +150,15 @@ namespace FileStorage.PL.WEB.Controllers
                 model.SearchString = "";
             }
 
-            var list = await UnitOfWorkService.FileService.GetAllAsync();
+            IEnumerable<FileInfoDTO> list;
+            try
+            {
+                list = await UnitOfWorkService.FileService.GetAllAsync();
+            }
+            catch
+            {
+                return View("Error");
+            }
             var fileInfoList = list.ToList();
 
             var pages = fileInfoList.Count;
@@ -184,9 +217,21 @@ namespace FileStorage.PL.WEB.Controllers
 
             return HttpNotFound();
         }
+
+        [Authorize(Roles="user")]
         public async Task<ActionResult> _Edit(string id)
         {
-            var file = await UnitOfWorkService.FileService.GetByIdAsync(id);
+            FileInfoDTO file;
+            try
+            {
+                file = await UnitOfWorkService.FileService.GetByIdAsync(id);
+            }
+            catch
+            {
+                return View("Error");
+            }
+
+
             FileStateViewModel model = new FileStateViewModel
             {
                 Id = file.Id,
@@ -205,7 +250,16 @@ namespace FileStorage.PL.WEB.Controllers
                 Id = model.Id,
                 IsPrivate = model.IsPrivate
             };
-            var result = await UnitOfWorkService.FileService.UpdateAsync(file);
+            OperationDetails result;
+            try
+            {
+                result = await UnitOfWorkService.FileService.UpdateAsync(file);
+            }
+            catch
+            {
+                return View("Error");
+            }
+
             if (result.Succedeed)
             {
                 TempData["SuccessMessage"] = result.Message;
@@ -214,9 +268,22 @@ namespace FileStorage.PL.WEB.Controllers
             TempData["ErrorMessage"] = result.Message;
             return RedirectToAction("GetAll");
         }
+
+        [Authorize]
         public async Task<ActionResult> _Delete(string id)
         {
-            var model = await UnitOfWorkService.FileService.GetByIdAsync(id);
+
+            FileInfoDTO model;
+            try
+            {
+                model = await UnitOfWorkService.FileService.GetByIdAsync(id);
+            }
+            catch
+            {
+                return View("Error");
+            }
+
+
             return PartialView(model);
         }
 

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
+﻿using System.Threading.Tasks;
 using System.Web.Mvc;
 using AutoMapper;
 using FileStorage.BLL.DTO;
+using FileStorage.BLL.Infrastucture;
 using FileStorage.BLL.Interfaces;
 using FileStorage.PL.WEB.Models;
 using Microsoft.AspNet.Identity;
@@ -15,7 +12,6 @@ namespace FileStorage.PL.WEB.Controllers
 {
     public class ManageUserProfileController : LangController
     {
-        private string _message;
         [Inject]
         public IUnitOfWorkService UnitOfWorkService { get; set; }
 
@@ -23,11 +19,15 @@ namespace FileStorage.PL.WEB.Controllers
         public async Task<ActionResult> GetDetails()
         {
             var user = await UnitOfWorkService.UserProfileService.GetAllDetailsByIdAsync(User.Identity.GetUserId());
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Помилка, спробуйте пізніше!";
+                return RedirectToAction("GetAll", "File");
+            }
+
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<UserDTO, UserViewModel>()
             ).CreateMapper();
             var model = mapper.Map<UserDTO, UserViewModel>(user);
-            if(_message!=null)
-                ViewData["massage"] = _message;
             return View(model);
         }
 
@@ -47,7 +47,8 @@ namespace FileStorage.PL.WEB.Controllers
                 return View(model);
             }
 
-            return View("Error");
+            TempData["ErrorMessage"] = "Помилка, спробуйте пізніше!";
+            return RedirectToAction("GetDetails");
         }
 
         [HttpPost]
@@ -64,13 +65,22 @@ namespace FileStorage.PL.WEB.Controllers
                     SecondName = model.SecondName,
                     BirthDate = model.BirthDate
                 };
-                var operationDetails = await UnitOfWorkService.UserProfileService.UpdateAsync(userProfile);
-                if (operationDetails.Succedeed)
+                OperationDetails result;
+                try
                 {
-                    TempData["SuccessMessage"] = operationDetails.Message;
+                    result = await UnitOfWorkService.UserProfileService.UpdateAsync(userProfile);
+                }
+                catch
+                {
+                    return View("Error");
+                }
+
+                if (result.Succedeed)
+                {
+                    TempData["SuccessMessage"] = result.Message;
                     return RedirectToAction("GetDetails");
                 }
-                TempData["ErrorMessage"] = operationDetails.Message;
+                TempData["ErrorMessage"] = result.Message;
                 return View(model);
             }
 
@@ -87,15 +97,25 @@ namespace FileStorage.PL.WEB.Controllers
         [Authorize]
         public async Task<ActionResult> Delete(string id)
         {
-            var result = await UnitOfWorkService.UserProfileService.DeleteAsync(id, Server.MapPath("~"));
+            OperationDetails result;
+            try
+            {
+                result = await UnitOfWorkService.UserProfileService.DeleteAsync(id, Server.MapPath("~"));
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Помилка, спробуйте пізніше!";
+                return RedirectToAction("GetDetails");
+            }
             if (result.Succedeed)
             {
                 if (User.IsInRole("admin"))
                 {
                     TempData["SuccessMessage"] = result.Message;
                     return RedirectToAction("ShowUsers", "Admin");
-                }
-                return RedirectToAction("Login","Account");
+                } 
+                TempData["SuccessMessage"] = result.Message;
+                return RedirectToAction("Logoff","Account");
             }
             TempData["ErrorMessage"] = result.Message;
             return RedirectToAction("GetDetails");

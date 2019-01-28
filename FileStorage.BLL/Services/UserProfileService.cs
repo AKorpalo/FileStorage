@@ -40,7 +40,16 @@ namespace FileStorage.BLL.Services
         }
         public async Task<UserDTO> GetAllDetailsByIdAsync(string id)
         {
-            UserProfile userProfile = await Task.Run(()=> _database.UserProfileRepository.GetbyId(id));
+            UserProfile userProfile;
+            try
+            {
+                userProfile = await Task.Run(() => _database.UserProfileRepository.GetbyId(id));
+            }
+            catch
+            {
+                return null;
+            }
+
             if (userProfile != null)
             {
                 var mapper = new MapperConfiguration(cfg => cfg.CreateMap<UserProfile, UserDTO>()
@@ -63,7 +72,7 @@ namespace FileStorage.BLL.Services
                 .ForMember(x => x.MaxSize, opt => opt.MapFrom(c => c.MaxSize / 1000000))
                 .ForMember(x => x.UserName, opt => opt.MapFrom(c => c.ApplicationUser.UserName))
             ).CreateMapper();
-            var list = await _database.UserProfileRepository.GetAllAsync();
+            IEnumerable<UserProfile> list = await _database.UserProfileRepository.GetAllAsync();
             return mapper.Map<IEnumerable<UserProfile>, List<UserDTO>>(list);
         }
         public async Task<OperationDetails> DeleteAsync(string id, string path)
@@ -74,14 +83,19 @@ namespace FileStorage.BLL.Services
                 return new OperationDetails(false,"Такого користувача не існує","");
             }
 
-            var list = user.Files.ToList();
-
-            FileService fileService = new FileService(_database);
-
-            foreach (var file in list)
+            var files = user.Files;
+            if (files != null)
             {
-                await fileService.DeleteAsync(file.Id, path);
+                var list = files.ToList();
+
+                FileService fileService = new FileService(_database);
+
+                foreach (var file in list)
+                {
+                    await fileService.DeleteAsync(file.Id, path);
+                }
             }
+
 
             _database.UserManager.Delete(user);
             _database.UserProfileRepository.Delete(user.Id);

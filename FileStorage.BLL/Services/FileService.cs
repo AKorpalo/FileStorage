@@ -8,6 +8,7 @@ using FileStorage.BLL.Infrastucture;
 using FileStorage.BLL.Interfaces;
 using FileStorage.DAL.Entities;
 using FileStorage.DAL.Interfaces;
+using Microsoft.AspNet.Identity;
 
 namespace FileStorage.BLL.Services
 {
@@ -45,6 +46,7 @@ namespace FileStorage.BLL.Services
         public async Task<OperationDetails> CreateAsync(FileInfoDTO file)
         {
             ApplicationUser user = await _database.UserManager.FindByIdAsync(file.UserId);
+
             if (user == null)
             {
                 return new OperationDetails(false, "Користувача з таким Email не існує", "");
@@ -76,8 +78,27 @@ namespace FileStorage.BLL.Services
                 UserId = user.Id
             };
             user.UserProfile.CurrentSize += fileData.Size;
-            await _database.UserManager.UpdateAsync(user);
-            _database.FileDataRepository.Create(fileData);
+            try
+            {
+                _database.UserManager.Update(user);
+            }
+            catch (Exception ex)
+            {
+                File.Delete(file.FilePath + saveFileName);
+                throw;
+            }
+
+
+            try
+            {
+                _database.FileDataRepository.Create(fileData);
+            }
+            catch (Exception e)
+            {
+                File.Delete(file.FilePath + saveFileName);
+                throw;
+            }
+            
             await _database.SaveAsync();
             return new OperationDetails(true, "Файл успішно збережено!", "");
         }
@@ -114,7 +135,7 @@ namespace FileStorage.BLL.Services
         }
         public async Task<FileDownloadDTO> DownloadAsync(string id, string path)
         {
-            var fileInfo = await FileIsFoundAsync(id, path);
+            FileInfoDTO fileInfo = await FileIsFoundAsync(id, path);
             if (fileInfo != null)
             {
                 return new FileDownloadDTO()
@@ -145,7 +166,16 @@ namespace FileStorage.BLL.Services
         }
         private async Task<FileInfoDTO> FileIsFoundAsync(string id, string path)
         {
-            FileInfoDTO fileInfo = await GetByIdAsync(id);
+            FileInfoDTO fileInfo;
+            try
+            {
+                fileInfo = await GetByIdAsync(id);
+            }
+            catch
+            {
+                return null;
+            }
+
             if (fileInfo != null)
             {
                 if (File.Exists(Path.Combine(path, fileInfo.RelativePath.Substring(2, fileInfo.RelativePath.Length - 2))))
@@ -160,7 +190,7 @@ namespace FileStorage.BLL.Services
         }
         private async Task DeleteFileInfoFromDatabaseAsync(string fileId)
         {
-            var file = _database.FileDataRepository.GetbyId(fileId);
+            FileData file = _database.FileDataRepository.GetbyId(fileId);
             if (file != null)
             {
                 var user = _database.UserProfileRepository.GetbyId(file.UserId);

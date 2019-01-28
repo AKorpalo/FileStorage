@@ -22,7 +22,7 @@ namespace FileStorage.PL.WEB.Controllers
 
         public ActionResult Login()
         {
-            AuthenticationManager.SignOut();
+            Logoff();
             return View();
         }
 
@@ -30,7 +30,6 @@ namespace FileStorage.PL.WEB.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model)
         {
-            //await SetInitialDataAsync();
             if (ModelState.IsValid)
             {
                 RegisterDto registerDto = new RegisterDto { UserName = model.Login, Password = model.Password };
@@ -44,9 +43,8 @@ namespace FileStorage.PL.WEB.Controllers
                     AuthenticationManager.SignOut();
                     AuthenticationManager.SignIn(new AuthenticationProperties
                     {
-                        IsPersistent = true
+                        //IsPersistent = true
                     }, claims);
-                    //ViewData["Mes"] = "Вітаю" + model.Login;
                     return RedirectToAction("GetAll", "File");
                 }
             }
@@ -63,8 +61,6 @@ namespace FileStorage.PL.WEB.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-           // await SetInitialDataAsync();
-
             if (ModelState.IsValid)
             {
                 RegisterDto registerDto = new RegisterDto
@@ -78,8 +74,8 @@ namespace FileStorage.PL.WEB.Controllers
                 };
                 OperationDetails operationDetails = await UnitOfWorkService.UserService.CreateAsync(registerDto);
                 if (operationDetails.Succedeed)
-                { 
-                    //ViewBag.Message = "Користувача " + model.UserName + " успішно зареєстровано!";
+                {
+                    TempData["SuccessMessage"] = "Користувача " + model.UserName + " успішно зареєстровано!";
                     return RedirectToAction("Login", "Account");
                 }
 

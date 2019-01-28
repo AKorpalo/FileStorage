@@ -68,21 +68,6 @@ namespace FileStorage.BLL.Services
             }
             return new OperationDetails(false, "Користувач з такою адресою вже існує!", "Email");
         }
-
-        public async Task SetInitialDataAsync(RegisterDto adminDto, List<string> roles)
-        {
-            foreach (string roleName in roles)
-            {
-                var role = await _database.RoleManager.FindByNameAsync(roleName);
-                if (role == null)
-                {
-                    role = new ApplicationRole { Name = roleName };
-                    await _database.RoleManager.CreateAsync(role);
-                }
-            }
-
-            await CreateAsync(adminDto);
-        }
         public void Dispose()
         {
             _database.Dispose();

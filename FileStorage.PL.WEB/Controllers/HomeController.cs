@@ -16,11 +16,19 @@ namespace FileStorage.PL.WEB.Controllers
         [Inject]
         public IUnitOfWorkService UnitOfWorkService { get; set; }
 
-        private int _numberOfObjectsPerPage = 2;
+        private int _numberOfObjectsPerPage = 5;
 
         public async Task<ActionResult> Index()
         {
-            var list = await UnitOfWorkService.FileService.GetAllAsync();
+            IEnumerable<FileInfoDTO> list;
+            try
+            {
+                list = await UnitOfWorkService.FileService.GetAllAsync();
+            }
+            catch
+            {
+                return View("Error");
+            }
             var fileInfoList = list.Where(p => p.IsPrivate == false).ToList();
 
             var pages = fileInfoList.Count;
@@ -45,7 +53,15 @@ namespace FileStorage.PL.WEB.Controllers
         }
         public async Task<ActionResult> _Search(string searchString)
         {
-            var list = await UnitOfWorkService.FileService.GetAllAsync();
+            IEnumerable<FileInfoDTO> list;
+            try
+            {
+                list = await UnitOfWorkService.FileService.GetAllAsync();
+            }
+            catch
+            {
+                return View("Error");
+            }
             var fileInfoList = list.Where(p => p.IsPrivate == false)
                 .Where(f => f.FileName.ToLower().Contains(searchString.ToLower())).ToList();
 
@@ -79,7 +95,15 @@ namespace FileStorage.PL.WEB.Controllers
                 model.SearchString = "";
             }
 
-            var list = await UnitOfWorkService.FileService.GetAllAsync();
+            IEnumerable<FileInfoDTO> list;
+            try
+            {
+                list = await UnitOfWorkService.FileService.GetAllAsync();
+            }
+            catch
+            {
+                return View("Error");
+            }
             var fileInfoList = list.ToList();
 
             var pages = fileInfoList.Count;

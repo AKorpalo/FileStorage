@@ -42,7 +42,16 @@ namespace FileStorage.BLL.Services
 
         public RolesDTO GetAllRoles()
         {
-            var allRoles = _database.RoleManager.Roles.Select(p => p.Name).ToList();
+            List<string> allRoles;
+            try
+            {
+                allRoles = _database.RoleManager.Roles.Select(p => p.Name).ToList();
+            }
+            catch
+            {
+                return null;
+            }
+
             RolesDTO roles = new RolesDTO()
             {
                 Roles = allRoles
@@ -52,7 +61,15 @@ namespace FileStorage.BLL.Services
 
         public RolesDTO GetAllUserRoles(string id)
         {
-            var allRoles = _database.UserManager.GetRoles(id).ToList();
+            List<string> allRoles;
+            try
+            {
+                allRoles = _database.UserManager.GetRoles(id).ToList();
+            }
+            catch
+            {
+                return null;
+            }
             RolesDTO roles = new RolesDTO()
             {
                 Id = id,

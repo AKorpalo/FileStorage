@@ -13,6 +13,5 @@ namespace FileStorage.BLL.Interfaces
     {
         Task<OperationDetails> CreateAsync(RegisterDto registerDto);
         Task<ClaimsIdentity> AuthenticateAsync(RegisterDto registerDto);
-        Task SetInitialDataAsync(RegisterDto adminDto, List<string> roles);
     }
 }

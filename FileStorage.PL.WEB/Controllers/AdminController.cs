@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using FileStorage.BLL.DTO;
+using FileStorage.BLL.Infrastucture;
 using FileStorage.BLL.Interfaces;
 using FileStorage.BLL.Services;
 using FileStorage.PL.WEB.Models;
@@ -17,11 +18,20 @@ namespace FileStorage.PL.WEB.Controllers
     {
         [Inject]
         public IUnitOfWorkService UnitOfWorkService { get; set; }
-        private int _numberOfObjectsPerPage = 2;
+        private int _numberOfObjectsPerPage = 5;
 
         public async Task<ActionResult> ShowUsers()
         {
-            var list = await UnitOfWorkService.UserProfileService.GetAllUsersAsync();
+            IEnumerable<UserDTO> list;
+            try
+            {
+                list = await UnitOfWorkService.UserProfileService.GetAllUsersAsync();
+            }
+            catch
+            {
+                return View("Error");
+            }
+            
             var fileInfoList = list.ToList();
 
             var pages = fileInfoList.Count;
@@ -45,9 +55,17 @@ namespace FileStorage.PL.WEB.Controllers
             return View(model);
         }
 
-        public async Task<PartialViewResult> _Search(string searchString)
+        public async Task<ActionResult> _Search(string searchString)
         {
-            var list = await UnitOfWorkService.UserProfileService.GetAllUsersAsync();
+            IEnumerable<UserDTO> list;
+            try
+            {
+                list = await UnitOfWorkService.UserProfileService.GetAllUsersAsync();
+            }
+            catch
+            {
+                return View("Error");
+            }
             var fileInfoList = list .Where(f => f.UserName.ToLower().Contains(searchString.ToLower())).ToList();
 
             var pages = fileInfoList.Count;
@@ -80,7 +98,15 @@ namespace FileStorage.PL.WEB.Controllers
                 model.SearchString = "";
             }
 
-            var list = await UnitOfWorkService.UserProfileService.GetAllUsersAsync();
+            IEnumerable<UserDTO> list;
+            try
+            {
+                list = await UnitOfWorkService.UserProfileService.GetAllUsersAsync();
+            }
+            catch
+            {
+                return View("Error");
+            }
             var fileInfoList = list.ToList();
 
             var pages = fileInfoList.Count;
@@ -110,6 +136,12 @@ namespace FileStorage.PL.WEB.Controllers
         public async Task<ActionResult> EditUser(string userId)
         {
             var details = await UnitOfWorkService.UserProfileService.GetAllDetailsByIdAsync(userId);
+            if (details == null)
+            {
+                TempData["ErrorMessage"] = "Помилка, спробуйте пізніше!";
+                return RedirectToAction("ShowUsers", "Admin");
+            }
+
             UserProfileViewModel model = new UserProfileViewModel
             {
                 Id = details.Id,
@@ -133,7 +165,17 @@ namespace FileStorage.PL.WEB.Controllers
                 BirthDate = model.BirthDate,
                 MaxSize = model.MaxSize
             };
-            var result = await UnitOfWorkService.UserProfileService.UpdateAsync(user);
+            OperationDetails result;
+            try
+            {
+                result = await UnitOfWorkService.UserProfileService.UpdateAsync(user);
+            }
+            catch
+            {
+                return View("Error");
+            }
+
+
             if (result.Succedeed)
             {
                 TempData["SuccessMessage"] = result.Message;
@@ -148,6 +190,12 @@ namespace FileStorage.PL.WEB.Controllers
         {
             var model = UnitOfWorkService.RoleService.GetAllUserRoles(userId);
             var roles = UnitOfWorkService.RoleService.GetAllRoles();
+            if (model == null || roles == null)
+            {
+                TempData["ErrorMessage"] = "Помилка, спробуйте пізніше!";
+                return RedirectToAction("ShowUsers");
+            }
+
             ViewBag.Roles = roles.Roles;
             return View(model);
         }
