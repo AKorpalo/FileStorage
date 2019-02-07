@@ -16,7 +16,7 @@
         </dd>
         <dd>.</dd>
         <dd>
-            @using (Html.BeginForm("Download", "File", new {id = Model.Id}, FormMethod.Post))
+            @using (Html.BeginForm("Download", "File", new {id = Model.Id}))
             {
                 @Html.AntiForgeryToken()
                 <input type="submit" value="@Resource.Download" class="btn btn-primary center-block"/>

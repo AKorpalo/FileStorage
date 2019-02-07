@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using App_LocalResources;
 using FileStorage.BLL.DTO;
 using FileStorage.BLL.Infrastucture;
 using FileStorage.BLL.Interfaces;
@@ -64,6 +65,8 @@ namespace FileStorage.PL.WEB.Controllers
                     TempData["ErrorMessage"] = result.Message;
                     return RedirectToAction("Getall", "File");
                 }
+                TempData["ErrorMessage"] = Resource.ChooseFileMes;
+                return View();
             }
             return RedirectToAction("Getall", "File");
         }
@@ -186,7 +189,6 @@ namespace FileStorage.PL.WEB.Controllers
             return PartialView("_TableBody", serchModel);
         }
 
-        [HttpPost]
         public async Task<ActionResult> Download(string id)
         {
             var fileDownloadInfo = await UnitOfWorkService.FileService.DownloadAsync(id, Server.MapPath("~"));

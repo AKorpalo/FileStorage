@@ -106,6 +106,15 @@ namespace App_LocalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Оберіть файл!.
+        /// </summary>
+        public static string ChooseFileMes {
+            get {
+                return ResourceManager.GetString("ChooseFileMes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Підтвердіть пароль.
         /// </summary>
         public static string ConfirmPassword {

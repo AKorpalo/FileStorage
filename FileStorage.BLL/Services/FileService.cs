@@ -52,6 +52,11 @@ namespace FileStorage.BLL.Services
                 return new OperationDetails(false, "Користувача з таким Email не існує", "");
             }
 
+            if (file.Size > 20000000)
+            {
+                return new OperationDetails(false, "Розмір файла занабто великий, максимальний розмір 20 мб", "");
+            }
+
             if (user.UserProfile.CurrentSize + file.Size > user.UserProfile.MaxSize)
             {
                 return new OperationDetails(false, "Не вистачає місця у сховищі", "");

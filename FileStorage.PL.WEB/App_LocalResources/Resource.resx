@@ -132,6 +132,9 @@
   <data name="ChangeRoles" xml:space="preserve">
     <value>Змінити ролі</value>
   </data>
+  <data name="ChooseFileMes" xml:space="preserve">
+    <value>Оберіть файл!</value>
+  </data>
   <data name="ConfirmPassword" xml:space="preserve">
     <value>Підтвердіть пароль</value>
   </data>

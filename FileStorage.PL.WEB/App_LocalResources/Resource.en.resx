@@ -132,6 +132,9 @@
   <data name="ChangeRoles" xml:space="preserve">
     <value>Change roles</value>
   </data>
+  <data name="ChooseFileMes" xml:space="preserve">
+    <value>Choose a file!</value>
+  </data>
   <data name="ConfirmPassword" xml:space="preserve">
     <value>ConfirmPassword</value>
   </data>
